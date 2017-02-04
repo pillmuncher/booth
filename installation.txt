@@ -5,7 +5,7 @@ mkvirtualenv --clear --python=/usr/bin/python booth
 cd <da wo das booth-Verzeichnis ist>/booth
 git pull
 python setup.py develop
-python -m booth booth.json
+python -m booth
 
 
 
