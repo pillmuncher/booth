@@ -1,0 +1,100 @@
+{
+  "led": {
+    "green": 37,
+    "yellow": 15,
+    "red": 38
+  },
+  "event": {
+    "click":{
+      "port": 16,
+      "action": "click_event"
+    },
+    "quit": {
+      "port": 35,
+      "code": 0
+    },
+    "shutdown": {
+      "port": 36,
+      "code": 64
+    },
+    "reboot": {
+      "port": 32,
+      "code": 65
+    }
+  },
+  "screen": {
+    "width": 1230,
+    "height": 950,
+    "offset": [0, 0]
+  },
+  "photo": {
+    "path": "/var/fotos/Fotos",
+    "mask": "{}-{{counter:02d}}.jpg",
+    "time_mask": "am %Y-%m-%d um %H-%M-%S Uhr",
+    "width": 2592,
+    "height": 1944,
+    "lights": [13, 21, 19, 11]
+  },
+  "montage": {
+    "path": "/media/usb/montage",
+    "mask": "{}.jpg",
+    "interval": 7,
+    "width": 1280,
+    "height":1024,
+    "rows": 2,
+    "cols": 2,
+    "background": [200, 200, 200],
+    "padding": 3,
+    "margin": {
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0
+    }
+  },
+  "collage": {
+    "logofile": "/home/pi/Desktop/countdown/druck.png",
+    "path": "/var/fotos/Collagen",
+    "mask": "{}.jpg",
+    "time_mask": "Ausdruck am %Y-%m-%d um %H-%M-%S Uhr",
+    "foreground": [0, 0, 0],
+    "background": [255, 255, 255],
+    "margin": {
+      "left": 50,
+      "right": 50,
+      "top": 50,
+      "bottom": 50,
+      "padding": 50
+    }
+  },
+  "etc": {
+    "path": "/home/pi/Desktop/countdown",
+    "interval": 3,
+    "bounce_time": 300,
+    "watermark": {
+        "image_file": "watermark.png"
+    },
+    "prepare": {
+        "image_mask": "photo_{}.jpg",
+        "image_position": [0, 0]
+    },
+    "countdown": {
+        "sound_mask": "countdown_{}.mp3",
+        "image_mask": "countdown_{}.jpg",
+        "image_position": [0, 0]
+    },
+    "smile": {
+        "image_file": "smile.png",
+        "image_position": [0, 0]
+    },
+    "black": {
+        "image_file": "black.png",
+        "image_position": [0, 0]
+    },
+    "songs": {
+        "enabled": true,
+        "dir": "/home/pi/Desktop/songs",
+        "sound_mask": "*.mp3"
+    }
+  }
+}

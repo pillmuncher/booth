@@ -1,0 +1,12 @@
+sudo apt-get install python
+sudo pip install --upgrade pip
+sudo pip install virtualenvwrapper
+mkvirtualenv --clear --python=/usr/bin/python booth
+cd <da wo das booth-Verzeichnis ist>/booth
+git pull
+python setup.py develop
+python -m booth booth.json
+
+
+
+git remote set-url origin git@bitbucket.org:pillmuncher/booth.git
