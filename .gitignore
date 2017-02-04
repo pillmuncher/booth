@@ -3,7 +3,7 @@
 .ropeproject
 __pycache__
 build
-hornet.egg-info
+*.egg-info
 setuptools-*
 dist
 *.pyc
@@ -12,4 +12,3 @@ dist
 ez_setup.py
 python2.7.exe.stackdump
 *.vim
-conf.txt
