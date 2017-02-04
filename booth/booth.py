@@ -72,7 +72,7 @@ def _get_conf():
         get_box(i) for i in xrange(c.montage.number_of_photos)
     ]
     c.montage.image = PIL.Image.new(
-        'RGBA',
+        'RGB',
         c.screen.size,
         c.montage.background,
     )
@@ -117,11 +117,7 @@ def _get_conf():
         c.etc.path,
         c.etc.watermark.image_file,
     )
-    c.etc.watermark.image = (
-        PIL.Image
-        .open(c.etc.watermark_file)
-        .resize(c.screen.size)
-    )
+    c.etc.watermark.image = PIL.Image.open(c.etc.watermark_file)
     c.etc.songs.mask = os.path.join(c.etc.songs.dir, c.etc.songs.sound_mask)
     return c
 
@@ -460,8 +456,7 @@ class PhotoBooth(object):
                 montage.paste(
                     PIL.Image
                     .open(photo_file_name)
-                    .convert('RGBA')
-                    .resize(CONF.montage.photo.size),
+                    .resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
                     CONF.montage.photo.box[i],
                 )
                 time.sleep(5.0)
