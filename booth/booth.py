@@ -117,7 +117,11 @@ def _get_conf():
         c.etc.path,
         c.etc.watermark.image_file,
     )
-    c.etc.watermark.image = PIL.Image.open(c.etc.watermark_file)
+    c.etc.watermark.image = (
+        PIL.Image
+        .open(c.etc.watermark_file)
+        .convert('RGB')
+    )
     c.etc.songs.mask = os.path.join(c.etc.songs.dir, c.etc.songs.sound_mask)
     return c
 
