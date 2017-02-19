@@ -57,7 +57,6 @@
     "path": "/var/fotos/Collagen",
     "mask": "{}.jpg",
     "time_mask": "Ausdruck am %Y-%m-%d um %H-%M-%S Uhr",
-    "size": [3000, 2000]
     "x1": 123,
     "x2": 456,
     "y1": 234,
