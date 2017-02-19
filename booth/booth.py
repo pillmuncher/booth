@@ -84,7 +84,7 @@ def _get_conf():
         c.collage.path,
         c.collage.mask,
     )
-    c.collage.logo = PIL.Image.open(c.collage.logofile)
+    c.collage.image = PIL.Image.open(c.collage.file)
     c.photo.file_mask = os.path.join(
         c.photo.path,
         c.photo.mask,
@@ -189,55 +189,14 @@ def lightshow(seconds):
     switch_off(CONF.led.red)
 
 
-def make_collage(margin, background, img11, img12, img21, img22):
-
+def save_collage(timestamp, img11, img12, img21, img22):
     assert img11.size == img21.size == img21.size == img22.size
-
-    img_width, img_height = img11.size
-
-    width = img_width * 2 + margin.padding + margin.left + margin.right
-    height = img_height * 2 + margin.padding + margin.top + margin.bottom
-
-    horizontal, vertical = width * 3, height * 4
-
-    if horizontal < vertical:
-        original_width = width
-        width *= vertical
-        width /= horizontal
-        left1 = margin.left + (width - original_width) / 2
-        top1 = margin.top
-    elif horizontal > vertical:
-        original_height = height
-        height *= horizontal
-        height /= vertical
-        left1 = margin.left
-        top1 = margin.top + (height - original_height) / 2
-    else:
-        left1 = margin.left
-        top1 = margin.top
-
-    left2 = left1 + img_width + margin.padding
-    top2 = top1 + img_height + margin.padding
-
-    collage = PIL.Image.new('RGB', (int(width), int(height)), background)
-    collage.paste(img11, (int(left1), int(top1)))
-    collage.paste(img12, (int(left2), int(top1)))
-    collage.paste(img21, (int(left1), int(top2)))
-    collage.paste(img22, (int(left2), int(top2)))
-
-    return collage
-
-
-def make_printout_image(*imgs):
-    collage = make_collage(CONF.collage.margin, CONF.collage.background, *imgs)
-    width, height = collage.size
-    printout = (
-        PIL.Image
-        .new('RGB', (int(height * 1.5), height), CONF.collage.background)
-    )
-    printout.paste(collage, (0, 0))
-    printout.paste(CONF.collage.logo, (width, 0))
-    return printout
+    collage = CONF.collage.image.copy()
+    collage.paste(img11, (CONF.collage.x1, CONF.collage.y1))
+    collage.paste(img12, (CONF.collage.x2, CONF.collage.y1))
+    collage.paste(img21, (CONF.collage.x1, CONF.collage.y2))
+    collage.paste(img22, (CONF.collage.x2, CONF.collage.y2))
+    collage.save(CONF.collage.full_mask.format(timestamp))
 
 
 class PhotoBooth(object):
@@ -470,10 +429,7 @@ class PhotoBooth(object):
             .blend(montage, CONF.etc.watermark.image, .25)
             .save(montage_file_name))
         self.show_image(pygame.image.load(montage_file_name))
-        threading.Thread(
-            target=lambda: make_printout_image(*imgs).save(
-                            CONF.collage.full_mask.format(timestamp))
-        ).start()
+        threading.Thread(target=lambda: save_collage(timestamp, *imgs)).start()
         time.sleep(CONF.montage.interval)
 
 
