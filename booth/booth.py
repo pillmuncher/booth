@@ -422,7 +422,6 @@ class PhotoBooth(object):
                     .resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
                     CONF.montage.photo.box[i],
                 )
-                time.sleep(5.0)
         self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
         montage_file_name = CONF.montage.full_mask.format(timestamp)
         (PIL.Image
