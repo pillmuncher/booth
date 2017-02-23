@@ -32,11 +32,11 @@ class Config(object):
                 setattr(self, k, v)
 
 
-def get_first_collage_number(glob_mask):
+def get_first_collage_number(glob_mask, pattern):
     file_names = glob.glob(glob_mask)
     if not file_names:
         return 0
-    matcher = re.compile(pattern=CONF.collage.pattern)
+    matcher = re.compile(pattern=pattern)
     return 1 + max(int(matcher.finditer(each).group(1))
                    for each in file_names)
 
@@ -98,7 +98,7 @@ def _get_conf():
     c.collage.image = PIL.Image.open(c.collage.file)
     c.collage.counter = itertools.count(
         get_first_collage_number(
-            c.collage.full_mask.format('*', '*')))
+            c.collage.full_mask.format('*', '*')), c.collage.pattern)
     c.photo.file_mask = os.path.join(
         c.photo.path,
         c.photo.mask,
