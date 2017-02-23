@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, division
 
 import contextlib
+import os.path
 import subprocess
 
 import pygame
@@ -47,14 +48,16 @@ def pygame_context():
 
 def wait_for_newest_file_name(directory):
     args = ['inotifywait', directory, '-e', 'moved_to', '--format',  '%f']
-    return subprocess.Popen(args, stdout=subprocess.PIPE).communicate()[0]
+    file_name = subprocess.Popen(args, stdout=subprocess.PIPE).communicate()[0]
+    return os.path.join(directory, file_name)
 
 
 def main(directory):
     with pygame_context() as screen:
         while True:
+            file_name = wait_for_newest_file_name(directory)
             thread_thru(
-                wait_for_newest_file_name(directory),
+                file_name,
                 pygame.image.load,
                 inject(pygame.transform.scale, SIZE),
                 inject(screen.blit, (0, 0))
