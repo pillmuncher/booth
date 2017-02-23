@@ -5,8 +5,10 @@ from __future__ import print_function, unicode_literals, division
 
 import contextlib
 import glob
+import itertools
 import json
 import os.path
+import re
 import Queue
 import random
 import threading
@@ -28,6 +30,15 @@ class Config(object):
                 setattr(self, k, tuple(v))
             else:
                 setattr(self, k, v)
+
+
+def get_first_collage_number(glob_mask):
+    file_names = glob.glob(glob_mask)
+    if not file_names:
+        return 0
+    matcher = re.compile(pattern=CONF.collage.pattern)
+    return 1 + max(int(matcher.finditer(each).group(1))
+                   for each in file_names)
 
 
 def _get_conf():
@@ -85,6 +96,9 @@ def _get_conf():
         c.collage.mask,
     )
     c.collage.image = PIL.Image.open(c.collage.file)
+    c.collage.counter = itertools.count(
+        get_first_collage_number(
+            c.collage.full_mask.format('*', '*')))
     c.photo.file_mask = os.path.join(
         c.photo.path,
         c.photo.mask,
@@ -196,7 +210,8 @@ def save_collage(timestamp, img11, img12, img21, img22):
     collage.paste(img12, (CONF.collage.x2, CONF.collage.y1))
     collage.paste(img21, (CONF.collage.x1, CONF.collage.y2))
     collage.paste(img22, (CONF.collage.x2, CONF.collage.y2))
-    collage.save(CONF.collage.full_mask.format(timestamp))
+    collage.save(CONF.collage.full_mask.format(timestamp,
+                                               next(CONF.collage.counter)))
 
 
 class PhotoBooth(object):
