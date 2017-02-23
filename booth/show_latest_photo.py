@@ -51,7 +51,7 @@ def wait_for_newest_file_name(directory):
 
 
 def main(directory):
-    with pygame_context as screen:
+    with pygame_context() as screen:
         while True:
             thread_thru(
                 wait_for_newest_file_name(directory),
