@@ -1,5 +1,5 @@
 {
-  "led": {
+  "led":  {
     "green": 37,
     "yellow": 15,
     "red": 38
@@ -57,10 +57,10 @@
     "path": "/var/fotos/Collagen",
     "mask": "{}.jpg",
     "time_mask": "Ausdruck am %Y-%m-%d um %H-%M-%S Uhr",
-    "x1": 123,
-    "x2": 456,
-    "y1": 234,
-    "y2": 567
+    "x1": 250,
+    "x2": 2875,
+    "y1": 120,
+    "y2": 2097
   },
   "etc": {
     "path": "/home/pi/Desktop/countdown",
