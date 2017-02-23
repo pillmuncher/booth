@@ -37,7 +37,7 @@ def get_first_collage_number(glob_mask, pattern):
     if not file_names:
         return 0
     matcher = re.compile(pattern=pattern)
-    return 1 + max(int(matcher.finditer(each).group(1))
+    return 1 + max(int(matcher.match(each).group(1))
                    for each in file_names)
 
 
