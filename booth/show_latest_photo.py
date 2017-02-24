@@ -48,7 +48,9 @@ def pygame_context():
 
 def wait_for_newest_file_name(directory):
     args = ['inotifywait', directory, '-e', 'moved_to', '--format',  '%f']
-    file_name = subprocess.Popen(args, stdout=subprocess.PIPE).communicate()[0]
+    file_name = (
+        subprocess.Popen(args, stdout=subprocess.PIPE).communicate()[0].strip()
+    )
     return os.path.join(directory, file_name)
 
 
