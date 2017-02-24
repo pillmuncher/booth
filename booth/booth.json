@@ -30,7 +30,7 @@
   "photo": {
     "path": "/var/fotos/Fotos",
     "mask": "{}-{{counter:02d}}.jpg",
-    "time_mask": "am %Y-%m-%d um %H-%M-%S Uhr",
+    "time_mask": "%Y-%m-%d-%H-%M-%S",
     "width": 2592,
     "height": 1944,
     "lights": [13, 21, 19, 11]
@@ -57,7 +57,6 @@
     "path": "/var/fotos/Collagen",
     "mask": "{}-{}.jpg",
     "pattern": "^.*-(\\d+)\\.jpg$",
-    "time_mask": "%Y-%m-%d-%H-%M-%S",
     "x1": 250,
     "x2": 2875,
     "y1": 120,
