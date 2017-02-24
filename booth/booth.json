@@ -55,9 +55,9 @@
   "collage": {
     "file": "/home/pi/Desktop/countdown/collage.png",
     "path": "/var/fotos/Collagen",
-    "mask": "{} - {}.jpg",
-    "pattern": "^.* - (\\d+)\\.jpg$",
-    "time_mask": "am %Y-%m-%d um %H-%M-%S Uhr",
+    "mask": "{}_{}.jpg",
+    "pattern": "^.*_(\\d+)\\.jpg$",
+    "time_mask": "am_%Y-%m-%d_um_%H-%M-%S_Uhr",
     "x1": 250,
     "x2": 2875,
     "y1": 120,
