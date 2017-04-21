@@ -28,7 +28,7 @@
     "offset": [0, 0]
   },
   "photo": {
-    "path": "/var/fotos/Fotos",
+    "path": "/home/pi/Desktop/Fotos",
     "mask": "{}-{{counter:02d}}.jpg",
     "time_mask": "%Y-%m-%d-%H-%M-%S",
     "width": 2592,
@@ -54,7 +54,7 @@
   },
   "collage": {
     "file": "/home/pi/Desktop/countdown/collage.png",
-    "path": "/var/fotos/Collagen",
+    "path": "/home/pi/Desktop/Collage",
     "mask": "{}-{}.jpg",
     "pattern": "^.*-(\\d+)\\.jpg$",
     "x1": 250,
@@ -87,7 +87,7 @@
         "image_position": [0, 0]
     },
     "songs": {
-        "enabled": true,
+        "enabled": false,
         "dir": "/home/pi/Desktop/songs",
         "sound_mask": "*.mp3"
     }

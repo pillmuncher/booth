@@ -11,7 +11,5 @@ setup(
         'gphoto2>=1.3.4',
         'picamera>=1.12',
         'Pillow>=3.4.2',
-        'Pygame>=1.9.3',
-        'RPi.GPIO',
     ]
 )

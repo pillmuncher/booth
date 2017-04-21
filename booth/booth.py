@@ -411,7 +411,7 @@ class PhotoBooth(object):
     def click_mode(self):
         self._status_led = CONF.led.red
         lights_on(CONF.photo.lights)
-        self._camera.start_preview(hflip=True)
+        self._camera.start_preview()
         yield
         self._camera.stop_preview()
         lights_off(CONF.photo.lights)
@@ -424,6 +424,7 @@ class PhotoBooth(object):
             photo_file_mask,
             resize=CONF.photo.size,
         )
+        self._camera.vflip = True
         montage = CONF.montage.image.copy()
         imgs = []
         with self.click_mode():
