@@ -1,12 +1,31 @@
-sudo apt-get install python
+# benötigte System-Packeges installieren:
+
+sudo apt-get install gphoto2 libexif-dev libfreetype6-dev libgphoto2
+sudo apt-get install libjpeg8-dev liblcms1-dev libltdl-dev libpopt-dev
+sudo apt-get install libtiff4-dev libusb-1.0 libusb-dev libwebp-dev python-dev
+sudo apt-get install python-setuptools tcl8.5-dev tk8.5-dev usbmount zlib1g-dev
+
+# virtuelles Environment für Projekt einrichten:
+
 sudo pip install --upgrade pip
-sudo pip install virtualenvwrapper
+sudo pip install virtualenv virtualenvwrapper
+
+# in /home/pi/
+export WORKON_HOME=~/Envs
+
 mkvirtualenv --clear --python=/usr/bin/python booth
-cd <da wo das booth-Verzeichnis ist>/booth
-git pull
-python setup.py develop
-python -m booth
 
+# booth programm repo klonen:
 
-
+cd <zukünftiges Elternverzeichnis vom booth-repo>
+git clone https://bitbucket.org/pillmuncher/booth
 git remote set-url origin git@bitbucket.org:pillmuncher/booth.git
+git config --global credential.helper cache
+git pull
+cd booth
+pip install gphoto2 picamera Pillow pygame
+python setup.py develop
+
+# Programm starten:
+
+python -m booth

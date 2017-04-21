@@ -58,12 +58,18 @@ def main(directory):
     with pygame_context() as screen:
         while True:
             file_name = wait_for_newest_file_name(directory)
-            thread_thru(
-                file_name,
-                pygame.image.load,
-                inject(pygame.transform.scale, SIZE),
-                inject(screen.blit, (0, 0))
-            )
+            print(file_name)
+            import sys
+            sys.exit()
+            image = pygame.image.load(file_name)
+            scaled = pygame.transform.scale(image, SIZE)
+            screen.blit(scaled, (0, 0))
+            # thread_thru(
+                # file_name,
+                # pygame.image.load,
+                # inject(pygame.transform.scale, SIZE),
+                # inject(screen.blit, (0, 0))
+            # )
 
 
 if __name__ == '__main__':
