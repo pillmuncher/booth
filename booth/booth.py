@@ -414,6 +414,7 @@ class PhotoBooth(object):
         self._status_led = CONF.led.red
         lights_on(CONF.photo.lights)
         self._camera.start_preview()
+        self._camera.vflip = True
         yield
         self._camera.stop_preview()
         lights_off(CONF.photo.lights)

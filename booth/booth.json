@@ -36,7 +36,7 @@
   },
   "montage": {
     "path": "/media/usb/montage",
-    "mask": "{}.jpg",
+    "mask": "{:%Y-%m-%d-%H-%M-%S}.jpg",
     "interval": 7,
     "width": 1280,
     "height":1024,
