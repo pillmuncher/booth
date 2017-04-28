@@ -93,7 +93,11 @@ def _get_conf():
         c.montage.path,
         c.montage.mask,
     )
-    c.collage.full_mask = os.path.join(
+    c.montage.full_glob_mask = os.path.join(
+        c.montage.path,
+        c.montage.mask,
+    )
+    c.collage.full_glob_mask = os.path.join(
         c.collage.path,
         c.collage.mask,
     )
@@ -442,7 +446,7 @@ class PhotoBooth(object):
                 )
                 time.sleep(0)
         self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
-        montage_file_name = CONF.montage.full_mask.format(timestamp)
+        montage_file_name = CONF.montage.full_glob_mask.format(timestamp)
         (PIL.Image
             .blend(montage, CONF.etc.watermark.image, .25)
             .save(montage_file_name))
