@@ -95,7 +95,7 @@ def _get_conf():
     )
     c.montage.full_glob_mask = os.path.join(
         c.montage.path,
-        c.montage.mask,
+        c.montage.glob_mask,
     )
     c.collage.full_glob_mask = os.path.join(
         c.collage.path,
@@ -322,7 +322,7 @@ class PhotoBooth(object):
         pygame.display.flip()
 
     def show_random_montage(self):
-        file_mask = CONF.montage.full_mask.format('*')
+        file_mask = CONF.montage.full_glob_mask
         file_names = glob.glob(file_mask)
         file_name = random.choice(file_names)
         image = pygame.image.load(file_name)
@@ -446,7 +446,7 @@ class PhotoBooth(object):
                 )
                 time.sleep(0)
         self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
-        montage_file_name = CONF.montage.full_glob_mask.format(timestamp)
+        montage_file_name = CONF.montage.full_mask.format(timestamp)
         (PIL.Image
             .blend(montage, CONF.etc.watermark.image, .25)
             .save(montage_file_name))
