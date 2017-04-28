@@ -37,7 +37,7 @@
   "montage": {
     "path": "/media/usb/montage",
     "mask": "{:%Y-%m-%d-%H-%M-%S}.jpg",
-    "glob_mask": "*.jpeg"
+    "glob_mask": "*.jpeg",
     "interval": 7,
     "width": 1280,
     "height":1024,
