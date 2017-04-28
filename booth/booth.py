@@ -97,7 +97,7 @@ def _get_conf():
         c.montage.path,
         c.montage.glob_mask,
     )
-    c.collage.full_glob_mask = os.path.join(
+    c.collage.full_mask = os.path.join(
         c.collage.path,
         c.collage.mask,
     )
