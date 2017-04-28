@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, division
 
 import contextlib
+import datetime
 import glob
 import itertools
 import json
@@ -11,6 +12,7 @@ import os.path
 import re
 import Queue
 import random
+import subprocess
 import threading
 import time
 
@@ -418,19 +420,18 @@ class PhotoBooth(object):
         self._status_led = CONF.led.yellow
 
     def click_event(self):
-        timestamp = time.strftime(CONF.photo.time_mask)
-        photo_file_mask = CONF.photo.file_mask.format(timestamp)
-        photo_file_names = self._camera.capture_continuous(
-            photo_file_mask,
-            resize=CONF.photo.size,
-        )
-        self._camera.vflip = True
+        timestamp = datetime.datetime.now()
         montage = CONF.montage.image.copy()
         imgs = []
         with self.click_mode():
             for i in xrange(CONF.montage.number_of_photos):
                 self.count_down(i + 1)
-                photo_file_name = next(photo_file_names)
+                photo_file_name = CONF.photo.file_mask.format(timestamp, i + 1)
+                # FIXME: return value should be checked:
+                subprocess.call(
+                    ['gphoto2',
+                     '--capture-image-and-download',
+                     '--filename', photo_file_name])
                 imgs.append(PIL.Image.open(photo_file_name))
                 montage.paste(
                     PIL.Image

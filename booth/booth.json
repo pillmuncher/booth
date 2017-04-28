@@ -29,8 +29,7 @@
   },
   "photo": {
     "path": "/home/pi/Desktop/Fotos",
-    "mask": "{}-{{counter:02d}}.jpg",
-    "time_mask": "%Y-%m-%d-%H-%M-%S",
+    "mask": "{:%Y-%m-%d-%H-%M-%S}-{:d}.jpg",
     "width": 2592,
     "height": 1944,
     "lights": [13, 21, 19, 11]
