@@ -210,6 +210,21 @@ def lightshow(seconds):
     switch_off(CONF.led.red)
 
 
+def save_montage(timestamp, img11, img12, img21, img22):
+    assert img11.size == img21.size == img21.size == img22.size
+    montage = CONF.montage.image.copy()
+    montage.paste(img11.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.montage.x1, CONF.montage.y1))
+    montage.paste(img12.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.montage.x2, CONF.montage.y1))
+    montage.paste(img21.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.montage.x1, CONF.montage.y2))
+    montage.paste(img22.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.montage.x2, CONF.montage.y2))
+    montage.save(CONF.montage.full_mask.format(timestamp,
+                                               next(CONF.montage.counter)))
+
+
 def save_collage(timestamp, img11, img12, img21, img22):
     assert img11.size == img21.size == img21.size == img22.size
     collage = CONF.collage.image.copy()
