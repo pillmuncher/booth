@@ -53,14 +53,14 @@
     }
   },
   "collage": {
-    "file": "/home/pi/Desktop/countdown/collage.png",
+    "file": "/home/pi/Desktop/countdown/collage.jpg",
     "path": "/home/pi/Desktop/Collage",
     "mask": "{}-{}.jpg",
     "pattern": "^.*-(\\d+)\\.jpg$",
-    "x1": 250,
-    "x2": 2875,
-    "y1": 120,
-    "y2": 2097
+    "x1": 20,
+    "x2": 5384,
+    "y1": 20,
+    "y2": 3656
   },
   "etc": {
     "path": "/home/pi/Desktop/countdown",
