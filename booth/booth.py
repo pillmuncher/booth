@@ -102,6 +102,7 @@ def _get_conf():
         c.collage.mask,
     )
     c.collage.image = PIL.Image.open(c.collage.file)
+    c.collage.photo.size = c.collage.photo.width, c.collage.photo.height
     c.collage.counter = itertools.count(
         get_first_collage_number(
             c.collage.full_mask.format('*', '*'), c.collage.pattern))
@@ -212,10 +213,14 @@ def lightshow(seconds):
 def save_collage(timestamp, img11, img12, img21, img22):
     assert img11.size == img21.size == img21.size == img22.size
     collage = CONF.collage.image.copy()
-    collage.paste(img11, (CONF.collage.x1, CONF.collage.y1))
-    collage.paste(img12, (CONF.collage.x2, CONF.collage.y1))
-    collage.paste(img21, (CONF.collage.x1, CONF.collage.y2))
-    collage.paste(img22, (CONF.collage.x2, CONF.collage.y2))
+    collage.paste(img11.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.collage.x1, CONF.collage.y1))
+    collage.paste(img12.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.collage.x2, CONF.collage.y1))
+    collage.paste(img21.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.collage.x1, CONF.collage.y2))
+    collage.paste(img22.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
+                  (CONF.collage.x2, CONF.collage.y2))
     collage.save(CONF.collage.full_mask.format(timestamp,
                                                next(CONF.collage.counter)))
 

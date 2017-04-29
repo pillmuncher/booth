@@ -57,10 +57,14 @@
     "path": "/home/pi/Desktop/Collage",
     "mask": "{}-{}.jpg",
     "pattern": "^.*-(\\d+)\\.jpg$",
-    "x1": 20,
-    "x2": 5384,
-    "y1": 20,
-    "y2": 3656
+    "x1": 100,
+    "x2": 3708,
+    "y1": 100,
+    "y2": 2680,
+    "photo": {
+      "width": 3508,
+      "height": 2480
+    }
   },
   "etc": {
     "path": "/home/pi/Desktop/countdown",
