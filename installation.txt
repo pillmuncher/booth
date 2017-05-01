@@ -2,8 +2,9 @@
 
 sudo apt-get install gphoto2 gvfs-bin libexif-dev libfreetype6-dev libgphoto2
 sudo apt-get install libjpeg8-dev liblcms1-dev libltdl-dev libpopt-dev
-sudo apt-get install libtiff4-dev libusb-1.0 libusb-dev libwebp-dev python-dev
-sudo apt-get install python-setuptools tcl8.5-dev tk8.5-dev usbmount zlib1g-dev
+sudo apt-get install libsdl1.2-dev libtiff4-dev libusb-1.0 libusb-dev libwebp-dev
+sudo apt-get install python-dev python-setuptools tcl8.5-dev tk8.5-dev usbmount
+sudo apt-get install zlib1g-dev
 
 # virtuelles Environment für Projekt einrichten:
 
@@ -22,7 +23,8 @@ git config --global credential.helper cache
 git clone https://bitbucket.org/pillmuncher/booth
 cd booth
 git remote set-url origin <username>@bitbucket.org:/pillmuncher/booth.git
-pip install gphoto2 picamera Pillow pygame
+pip install picamera Pillow
+pip install hg+http://bitbucket.org/pygame/pygame
 python setup.py develop
 
 # Programm starten:
