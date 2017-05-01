@@ -2,7 +2,7 @@
 
 set -o nounset
 
-set gmount=$( gvfs-mount -l  |  sed -n '/gphoto2:/ {s/.* //p; q}' )
+gmount=$( gvfs-mount -l  |  sed -n '/gphoto2:/ {s/.* //p; q}' )
 echo "Die Kamera ist unter $gmount eingehängt."
 if [ "$gmount" = "" ]
 then
