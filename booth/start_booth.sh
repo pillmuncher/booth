@@ -7,8 +7,7 @@ if [[ "$gname" = "" ]]
 then
     echo "Kamera ist nicht eingehängt."
 else
-    echo "Der Mountname ist $gname."
-    echo "Kamera wird ausgehängt."
+    echo "Kamera $gname wird ausgehängt."
     gvfs-mount -u  "$gname"
     sleep 0.5
 fi
