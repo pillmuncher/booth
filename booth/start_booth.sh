@@ -7,9 +7,10 @@ if [[ "$gname" = "" ]]
 then
     echo "Kamera ist nicht eingehängt."
 else
-    echo "Der Mountname ist $gname"
+    echo "Der Mountname ist $gname."
+    echo "Kamera wird ausgehängt."
     gvfs-mount -u  "$gname"
-    sleep 0.1
+    sleep 0.5
 fi
 
 python booth.py
