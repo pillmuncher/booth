@@ -2,8 +2,8 @@
 
 set -o nounset
 
-gmount=$( gvfs-mount -l  |  sed -n '/gphoto2:/ {s/.* //p; q}' )
-if [ "$gmount" ]
+gmount=$( gvfs-mount -l  |  sed -n '/CDDVDW/ {s/.* //p; q}' )
+if [ $gmount ]
 then
     echo "Kamera $gmount wird ausgehängt."
     # gvfs-mount -u  "$gmount"
