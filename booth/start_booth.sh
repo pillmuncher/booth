@@ -2,13 +2,13 @@
 
 set -o nounset
 
-gmount=$( gvfs-mount -l  |  sed -n '/gphoto2:/ {s/.* //p; q}' )
-if [[ "$gmount" = "" ]]
+gname=$( gvfs-mount -l  |  sed -n '/gphoto2:/ {s/.* //p; q}' )
+if [[ "$gname" = "" ]]
 then
     echo "Kamera ist nicht eingehängt."
 else
     echo "Der Mountname ist $gname"
-    gvfs-mount -u  "$gmount"
+    gvfs-mount -u  "$gname"
     sleep 0.1
 fi
 
