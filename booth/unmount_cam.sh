@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -o nounset
-
+sleep 8
 gmount=$( gvfs-mount -l  |  sed -n '/gphoto2:/ {s/.* //p; q}' )
 if [ $gmount ]
 then
