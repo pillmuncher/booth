@@ -426,7 +426,6 @@ class PhotoBooth(object):
                 pos=CONF.montage.photo.positions,
                 size=CONF.montage.photo.size,
                 transform=blend_montage,
-                n=next(CONF.montage.counter),
                 format=CONF.montage.full_mask.format,
                 in_queue=montage_queue,
                 out_queue=result_queue)
