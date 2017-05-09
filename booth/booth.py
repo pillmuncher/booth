@@ -22,6 +22,17 @@ import pygame
 import RPi.GPIO as GPIO
 
 
+def identity(x):
+    return x
+
+
+GPHOTO2_CMD_LINE = ['gphoto2', '--capture-image-and-download', '--filename']
+
+
+class GPhoto2Error(Exception):
+    pass
+
+
 class Config(object):
 
     def __init__(self, conf):
@@ -45,44 +56,17 @@ def get_first_collage_number(glob_mask, pattern):
 
 def _get_conf():
 
-    def photo_length(total, padding, margin_a, margin_b, parts):
-        blank = margin_a + (parts - 1) * padding + margin_b
-        return (total - blank) // parts
-
-    def get_box(n):
-        row, col = divmod(n, c.montage.cols)
-        left = c.montage.margin.left + c.montage.photo.padded_width * col
-        right = left + c.montage.photo.width
-        upper = c.montage.margin.top + c.montage.photo.padded_height * row
-        lower = upper + c.montage.photo.height
-        return left, upper, right, lower
-
     with open('booth.json', 'r') as _config_file:
         c = Config(json.load(_config_file))
     c.photo.size = c.photo.width, c.photo.height
     c.screen.size = c.screen.width, c.screen.height
     c.screen.rect = 0, 0, c.montage.width, c.montage.height
-    c.montage.number_of_photos = c.montage.cols * c.montage.rows
-    c.montage.photo = Config({})
-    c.montage.photo.width = photo_length(
-        c.screen.width,
-        c.montage.padding,
-        c.montage.margin.left,
-        c.montage.margin.right,
-        c.montage.cols,
-    )
-    c.montage.photo.height = photo_length(
-        c.screen.height,
-        c.montage.padding,
-        c.montage.margin.top,
-        c.montage.margin.bottom,
-        c.montage.rows,
-    )
     c.montage.photo.size = c.montage.photo.width, c.montage.photo.height
-    c.montage.photo.padded_width = c.montage.photo.width + c.montage.padding
-    c.montage.photo.padded_height = c.montage.photo.height + c.montage.padding
-    c.montage.photo.box = [
-        get_box(i) for i in xrange(c.montage.number_of_photos)
+    c.montage.photo.positions = [
+        (c.montage.x1, c.montage.y1),
+        (c.montage.x2, c.montage.y1),
+        (c.montage.x1, c.montage.y2),
+        (c.montage.x2, c.montage.y2),
     ]
     c.montage.image = PIL.Image.new(
         'RGB',
@@ -103,6 +87,12 @@ def _get_conf():
     )
     c.collage.image = PIL.Image.open(c.collage.file)
     c.collage.photo.size = c.collage.photo.width, c.collage.photo.height
+    c.collage.photo.positions = [
+        (c.collage.x1, c.montage.y1),
+        (c.collage.x2, c.montage.y1),
+        (c.collage.x1, c.montage.y2),
+        (c.collage.x2, c.montage.y2),
+    ]
     c.collage.counter = itertools.count(
         get_first_collage_number(
             c.collage.full_mask.format('*', '*'), c.collage.pattern))
@@ -110,10 +100,6 @@ def _get_conf():
         c.photo.path,
         c.photo.mask,
     )
-    # c.etc.prepare.full_sound_mask = os.path.join(
-        # c.etc.path,
-        # c.etc.prepare.sound_mask
-    # )
     c.etc.prepare.full_image_mask = os.path.join(
         c.etc.path,
         c.etc.prepare.image_mask,
@@ -208,36 +194,6 @@ def lightshow(seconds):
     switch_off(CONF.led.green)
     switch_off(CONF.led.yellow)
     switch_off(CONF.led.red)
-
-
-def save_montage(timestamp, img11, img12, img21, img22):
-    assert img11.size == img21.size == img21.size == img22.size
-    montage = CONF.montage.image.copy()
-    montage.paste(img11.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x1, CONF.montage.y1))
-    montage.paste(img12.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x2, CONF.montage.y1))
-    montage.paste(img21.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x1, CONF.montage.y2))
-    montage.paste(img22.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x2, CONF.montage.y2))
-    montage.save(CONF.montage.full_mask.format(timestamp,
-                                               next(CONF.montage.counter)))
-
-
-def save_collage(timestamp, img11, img12, img21, img22):
-    assert img11.size == img21.size == img21.size == img22.size
-    collage = CONF.collage.image.copy()
-    collage.paste(img11.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x1, CONF.collage.y1))
-    collage.paste(img12.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x2, CONF.collage.y1))
-    collage.paste(img21.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x1, CONF.collage.y2))
-    collage.paste(img22.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x2, CONF.collage.y2))
-    collage.save(CONF.collage.full_mask.format(timestamp,
-                                               next(CONF.collage.counter)))
 
 
 class PhotoBooth(object):
@@ -446,33 +402,69 @@ class PhotoBooth(object):
 
     def click_event(self):
         timestamp = datetime.datetime.now()
-        montage = CONF.montage.image.copy()
-        imgs = []
+        collage_queue = Queue.Queue()
+        collage_thread = threading.Thread(
+            target=paste_photos,
+            kwargs=dict(
+                bg=CONF.collage.image.copy(),
+                ts=timestamp,
+                pos=CONF.collage.photo.positions,
+                size=CONF.collage.photo.size,
+                transform=identity,
+                n=next(CONF.collage.counter),
+                format=CONF.collage.full_mask.format,
+                in_queue=collage_queue)
+        )
+        collage_thread.start()
+        montage_queue = Queue.Queue()
+        result_queue = Queue.Queue()
+        montage_thread = threading.Thread(
+            target=paste_photos,
+            kwargs=dict(
+                bg=CONF.montage.image.copy(),
+                ts=timestamp,
+                pos=CONF.montage.photo.positions,
+                size=CONF.montage.photo.size,
+                transform=blend_montage,
+                n=next(CONF.montage.counter),
+                format=CONF.montage.full_mask.format,
+                in_queue=montage_queue,
+                out_queue=result_queue)
+        )
+        montage_thread.start()
         with self.click_mode():
-            for i in xrange(CONF.montage.number_of_photos):
+            for i in xrange(4):
                 self.count_down(i + 1)
                 photo_file_name = CONF.photo.file_mask.format(timestamp, i + 1)
-                # FIXME: return value should be checked:
-                subprocess.call(
-                    ['gphoto2',
-                     '--capture-image-and-download',
-                     '--filename', photo_file_name])
-                imgs.append(PIL.Image.open(photo_file_name))
-                montage.paste(
-                    PIL.Image
-                    .open(photo_file_name)
-                    .resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                    CONF.montage.photo.box[i],
-                )
-                time.sleep(0)
+                if subprocess.call(GPHOTO2_CMD_LINE + [photo_file_name]):
+                    raise RuntimeError("gphoto2 couldn't capture image!")
+                photo = PIL.Image.open(photo_file_name)
+                collage_queue.put(photo)
+                montage_queue.put(photo)
         self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
-        montage_file_name = CONF.montage.full_mask.format(timestamp)
-        (PIL.Image
-            .blend(montage, CONF.etc.watermark.image, .25)
-            .save(montage_file_name))
-        self.show_image(pygame.image.load(montage_file_name))
-        threading.Thread(target=lambda: save_collage(timestamp, *imgs)).start()
+        self.show_image(result_queue.get())
         time.sleep(CONF.montage.interval)
+
+
+def blend_montage(montage):
+    return PIL.Image.blend(montage, CONF.etc.watermark.image, .25)
+
+
+def paste_photos(bg, ts, pos, size, transform, format, in_queue, n=None,
+                 out_queue=None):
+    img = None
+    try:
+        for i in xrange(4):
+            bg.paste(
+                in_queue.get().copy().resize(size, PIL.Image.ANTIALIAS),
+                pos[i])
+        if n is None:
+            img = transform(bg).save(format(ts))
+        else:
+            img = transform(bg).save(format(ts, n))
+    finally:
+        if out_queue:
+            out_queue.put(img)
 
 
 def main():
