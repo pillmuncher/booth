@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sleep 4
+
 python booth.py
 
 if [ $? -eq 64 ]
