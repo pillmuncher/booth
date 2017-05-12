@@ -394,8 +394,7 @@ class PhotoBooth(object):
     def click_event(self):
         timestamp = datetime.datetime.now()
         montage_paste, montage_result = paste_images(CONF.montage.image,
-                                                     CONF.montage.photo.size,
-                                                     )
+                                                     CONF.montage.photo.size)
         collage_paste, collage_result = paste_images(CONF.collage.image,
                                                      CONF.collage.photo.size)
         with self.click_mode():
