@@ -16,16 +16,19 @@ import subprocess
 import threading
 import time
 
-import picamera
-import PIL.Image
+from PIL import Image
 import pygame
 import RPi.GPIO as GPIO
+import picamera
+
+from paster import paste_images
 
 
-GPHOTO2_CMD_LINE = ['gphoto2', '--capture-image-and-download', '--filename'])
+def identity(x):
+    return x
 
-class GPhoto2Error(Exception):
-    pass
+
+GPHOTO2_CMD_LINE = ['gphoto2', '--capture-image-and-download', '--filename']
 
 
 class Config(object):
@@ -51,46 +54,19 @@ def get_first_collage_number(glob_mask, pattern):
 
 def _get_conf():
 
-    def photo_length(total, padding, margin_a, margin_b, parts):
-        blank = margin_a + (parts - 1) * padding + margin_b
-        return (total - blank) // parts
-
-    def get_box(n):
-        row, col = divmod(n, c.montage.cols)
-        left = c.montage.margin.left + c.montage.photo.padded_width * col
-        right = left + c.montage.photo.width
-        upper = c.montage.margin.top + c.montage.photo.padded_height * row
-        lower = upper + c.montage.photo.height
-        return left, upper, right, lower
-
-    with open('booth.json', 'r') as _config_file:
-        c = Config(json.load(_config_file))
+    with open('booth.json', 'r') as config_file:
+        c = Config(json.load(config_file))
     c.photo.size = c.photo.width, c.photo.height
     c.screen.size = c.screen.width, c.screen.height
     c.screen.rect = 0, 0, c.montage.width, c.montage.height
-    c.montage.number_of_photos = c.montage.cols * c.montage.rows
-    c.montage.photo = Config({})
-    c.montage.photo.width = photo_length(
-        c.screen.width,
-        c.montage.padding,
-        c.montage.margin.left,
-        c.montage.margin.right,
-        c.montage.cols,
-    )
-    c.montage.photo.height = photo_length(
-        c.screen.height,
-        c.montage.padding,
-        c.montage.margin.top,
-        c.montage.margin.bottom,
-        c.montage.rows,
-    )
     c.montage.photo.size = c.montage.photo.width, c.montage.photo.height
-    c.montage.photo.padded_width = c.montage.photo.width + c.montage.padding
-    c.montage.photo.padded_height = c.montage.photo.height + c.montage.padding
-    c.montage.photo.box = [
-        get_box(i) for i in xrange(c.montage.number_of_photos)
+    c.montage.photo.positions = [
+        (c.montage.x1, c.montage.y1),
+        (c.montage.x2, c.montage.y1),
+        (c.montage.x1, c.montage.y2),
+        (c.montage.x2, c.montage.y2),
     ]
-    c.montage.image = PIL.Image.new(
+    c.montage.image = Image.new(
         'RGB',
         c.screen.size,
         c.montage.background,
@@ -107,8 +83,14 @@ def _get_conf():
         c.collage.path,
         c.collage.mask,
     )
-    c.collage.image = PIL.Image.open(c.collage.file)
+    c.collage.image = Image.open(c.collage.file)
     c.collage.photo.size = c.collage.photo.width, c.collage.photo.height
+    c.collage.photo.positions = [
+        (c.collage.x1, c.montage.y1),
+        (c.collage.x2, c.montage.y1),
+        (c.collage.x1, c.montage.y2),
+        (c.collage.x2, c.montage.y2),
+    ]
     c.collage.counter = itertools.count(
         get_first_collage_number(
             c.collage.full_mask.format('*', '*'), c.collage.pattern))
@@ -116,10 +98,6 @@ def _get_conf():
         c.photo.path,
         c.photo.mask,
     )
-    # c.etc.prepare.full_sound_mask = os.path.join(
-        # c.etc.path,
-        # c.etc.prepare.sound_mask
-    # )
     c.etc.prepare.full_image_mask = os.path.join(
         c.etc.path,
         c.etc.prepare.image_mask,
@@ -145,7 +123,7 @@ def _get_conf():
         c.etc.watermark.image_file,
     )
     c.etc.watermark.image = (
-        PIL.Image
+        Image
         .open(c.etc.watermark_file)
         .convert('RGB')
     )
@@ -216,36 +194,6 @@ def lightshow(seconds):
     switch_off(CONF.led.red)
 
 
-def save_montage(timestamp, img11, img12, img21, img22):
-    assert img11.size == img21.size == img21.size == img22.size
-    montage = CONF.montage.image.copy()
-    montage.paste(img11.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x1, CONF.montage.y1))
-    montage.paste(img12.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x2, CONF.montage.y1))
-    montage.paste(img21.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x1, CONF.montage.y2))
-    montage.paste(img22.resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.montage.x2, CONF.montage.y2))
-    montage.save(CONF.montage.full_mask.format(timestamp,
-                                               next(CONF.montage.counter)))
-
-
-def save_collage(timestamp, img11, img12, img21, img22):
-    assert img11.size == img21.size == img21.size == img22.size
-    collage = CONF.collage.image.copy()
-    collage.paste(img11.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x1, CONF.collage.y1))
-    collage.paste(img12.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x2, CONF.collage.y1))
-    collage.paste(img21.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x1, CONF.collage.y2))
-    collage.paste(img22.resize(CONF.collage.photo.size, PIL.Image.ANTIALIAS),
-                  (CONF.collage.x2, CONF.collage.y2))
-    collage.save(CONF.collage.full_mask.format(timestamp,
-                                               next(CONF.collage.counter)))
-
-
 class PhotoBooth(object):
 
     def __init__(self):
@@ -253,13 +201,6 @@ class PhotoBooth(object):
         self._camera = None
 
     def __enter__(self):
-        self._setup()
-        return self
-
-    def __exit__(self, *args):
-        self._teardown()
-
-    def _setup(self):
         self._status_led = CONF.led.yellow
         self._events = Hatch(CONF.etc.interval, self.show_random_montage)
         self._camera = picamera.PiCamera()
@@ -311,8 +252,9 @@ class PhotoBooth(object):
         blinker = threading.Thread(target=self.blink)
         blinker.daemon = True
         blinker.start()
+        return self
 
-    def _teardown(self):
+    def __exit__(self, *args):
         self._status_led = None
         lightshow(1)
         time.sleep(3)
@@ -403,8 +345,8 @@ class PhotoBooth(object):
         pygame.mixer.music.stop()
 
     def show_overlay(self, file_name, position, seconds):
-        img = PIL.Image.open(os.path.join(CONF.etc.path, file_name))
-        pad = PIL.Image.new('RGB', (
+        img = Image.open(os.path.join(CONF.etc.path, file_name))
+        pad = Image.new('RGB', (
             ((img.size[0] + 31) // 32) * 32,
             ((img.size[1] + 15) // 16) * 16,
         ))
@@ -415,7 +357,6 @@ class PhotoBooth(object):
         time.sleep(seconds)
         self._camera.remove_overlay(overlay)
 
-    @contextlib.contextmanager
     def count_down(self, n):
         self.show_overlay(
             CONF.etc.prepare.full_image_mask.format(n),
@@ -452,47 +393,31 @@ class PhotoBooth(object):
 
     def click_event(self):
         timestamp = datetime.datetime.now()
-        montage = CONF.montage.image.copy()
-        imgs = []
+        montage_paste, montage_result = paste_images(CONF.montage.image,
+                                                     CONF.montage.photo.size,
+                                                     )
+        collage_paste, collage_result = paste_images(CONF.collage.image,
+                                                     CONF.collage.photo.size)
         with self.click_mode():
-            for i in xrange(CONF.montage.number_of_photos):
+            for i in xrange(4):
                 self.count_down(i + 1)
                 photo_file_name = CONF.photo.file_mask.format(timestamp, i + 1)
                 if subprocess.call(GPHOTO2_CMD_LINE + [photo_file_name]):
                     raise RuntimeError("gphoto2 couldn't capture image!")
-                imgs.append(PIL.Image.open(photo_file_name))
-                montage.paste(
-                    PIL.Image
-                    .open(photo_file_name)
-                    .resize(CONF.montage.photo.size, PIL.Image.ANTIALIAS),
-                    CONF.montage.photo.box[i],
-                )
-                time.sleep(0)
+                montage_paste(CONF.montage.photo.positions[i], photo_file_name)
+                collage_paste(CONF.collage.photo.positions[i], photo_file_name)
+        montage = Image.blend(montage_result(), CONF.etc.watermark.image, .25)
         self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
-        montage_file_name = CONF.montage.full_mask.format(timestamp)
-        (PIL.Image
-            .blend(montage, CONF.etc.watermark.image, .25)
-            .save(montage_file_name))
-        self.show_image(pygame.image.load(montage_file_name))
-        threading.Thread(target=lambda: save_collage(timestamp, *imgs)).start()
+        self.show_image(montage)
+
+        def save():
+            montage.save(
+                CONF.montage.full_mask.format(timestamp))
+            collage_result().save(
+                CONF.collage.full_mask.format(timestamp,
+                                              next(CONF.collage.counter)))
+        threading.Thread(target=save).start()
         time.sleep(CONF.montage.interval)
-
-
-def make_montage(timestamp, photo_file_names):
-    montage_file_name = CONF.montage.full_mask.format(timestamp)
-
-
-def make_collage(timestamp, photo_file_names):
-    pass
-
-
-def join_photos(timestamp, action):
-    try:
-        photo_file_names = [(yield) for i in range(4)]
-    except GPhoto2Error:
-        yield
-    else:
-        yield action(timestamp, photo_file_names)
 
 
 def main():

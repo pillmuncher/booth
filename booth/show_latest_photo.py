@@ -10,7 +10,7 @@ import subprocess
 import pygame
 
 
-SIZE = (1280, 1024)
+SIZE = 1280, 1024
 
 
 def flip(f):
