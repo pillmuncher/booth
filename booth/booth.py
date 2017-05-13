@@ -407,9 +407,9 @@ class PhotoBooth(object):
                     raise RuntimeError("gphoto2 couldn't capture image!")
                 montage_paste(CONF.montage.photo.positions[i], photo_file_name)
                 collage_paste(CONF.collage.photo.positions[i], photo_file_name)
-        montage = Image.blend(montage_result(), CONF.etc.watermark.image, .25)
-        self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
-        self.show_image(montage)
+            montage = Image.blend(montage_result(), CONF.etc.watermark.image, .25)
+            self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
+            self.show_image(montage)
         montage.save(CONF.montage.full_mask.format(timestamp))
         collage_result().save(
             CONF.collage.full_mask.format(timestamp,
