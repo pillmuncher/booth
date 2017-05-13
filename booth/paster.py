@@ -16,7 +16,8 @@ class Thing:
 
 def _paste(background, size, position, photo_file_name):
     photo = Image.open(photo_file_name).resize(size, Image.ANTIALIAS)
-    return background.paste(photo, position)
+    background.paste(photo, position)
+    return background
 
 
 @contextlib.contextmanager
@@ -27,15 +28,11 @@ def paster(background, size):
             def run(image=background):
                 for _ in xrange(4):
                     position, photo_file_name = queue.get()
-                    print()
-                    print("!!!", position, photo_file_name)
-                    print()
                     image = process_executor.submit(_paste,
                                                     image,
                                                     size,
                                                     position,
                                                     photo_file_name).result()
-                    print("???", image)
                 return image
             thing = Thing()
             thing.paste = queue.put
