@@ -394,17 +394,17 @@ class PhotoBooth(object):
     def click_event(self):
         timestamp = datetime.datetime.now()
         file_names = []
-        with self.click_mode():
-            for i in xrange(4):
-                self.count_down(i + 1)
-                with ProcessPoolExecutor(max_workers=1) as executor:
-                    executor.submit(noop).result()
-                file_names.append(CONF.photo.file_mask.format(timestamp, i + 1))
-                if subprocess.call(GPHOTO2_CMD_LINE + file_names[-1:]):
-                    raise RuntimeError("gphoto2 couldn't capture image!")
-                with ProcessPoolExecutor(max_workers=1) as executor:
-                    executor.submit(noop).result()
-            self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
+        with ProcessPoolExecutor(max_workers=1) as executor1:
+            with ProcessPoolExecutor(max_workers=1) as executor2:
+                with self.click_mode():
+                    for i in xrange(4):
+                        self.count_down(i + 1)
+                        executor1.submit(noop).result()
+                        file_names.append(CONF.photo.file_mask.format(timestamp, i + 1))
+                        if subprocess.call(GPHOTO2_CMD_LINE + file_names[-1:]):
+                            raise RuntimeError("gphoto2 couldn't capture image!")
+                        executor2.submit(noop).result()
+                    self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
         montage = CONF.montage.image.copy()
         # collage = CONF.collage.image.copy()
         for i in xrange(4):
