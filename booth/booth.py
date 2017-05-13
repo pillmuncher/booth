@@ -395,23 +395,23 @@ class PhotoBooth(object):
                 if subprocess.call(GPHOTO2_CMD_LINE + file_names[-1:]):
                     raise RuntimeError("gphoto2 couldn't capture image!")
             montage = CONF.montage.image.copy()
-            collage = CONF.collage.image.copy()
+            # collage = CONF.collage.image.copy()
             for i in xrange(4):
                 photo = Image.open(file_names[i])
                 montage.paste(photo.resize(CONF.montage.photo.size,
                                            Image.ANTIALIAS),
                               CONF.montage.photo.positions[i])
-                collage.paste(photo.resize(CONF.collage.photo.size,
-                                           Image.ANTIALIAS),
-                              CONF.collage.photo.positions[i])
+                # collage.paste(photo.resize(CONF.collage.photo.size,
+                                           # Image.ANTIALIAS),
+                              # CONF.collage.photo.positions[i])
+            self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
             montage = Image.blend(montage, CONF.etc.watermark.image, .25)
             montage_file_name = CONF.montage.full_mask.format(timestamp)
             montage.save(montage_file_name)
-            self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
             self.show_image(pygame.image.load(montage_file_name))
-            collage.save(
-                CONF.collage.full_mask.format(timestamp,
-                                              next(CONF.collage.counter)))
+            # collage.save(
+                # CONF.collage.full_mask.format(timestamp,
+                                              # next(CONF.collage.counter)))
         time.sleep(CONF.montage.interval)
 
 
