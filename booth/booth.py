@@ -405,13 +405,13 @@ class PhotoBooth(object):
                                            # Image.ANTIALIAS),
                               # CONF.collage.photo.positions[i])
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
-            montage = Image.blend(montage, CONF.etc.watermark.image, .25)
-            montage_file_name = CONF.montage.full_mask.format(timestamp)
-            montage.save(montage_file_name)
-            self.show_image(pygame.image.load(montage_file_name))
-            # collage.save(
-                # CONF.collage.full_mask.format(timestamp,
-                                              # next(CONF.collage.counter)))
+        montage = Image.blend(montage, CONF.etc.watermark.image, .25)
+        montage_file_name = CONF.montage.full_mask.format(timestamp)
+        montage.save(montage_file_name)
+        self.show_image(pygame.image.load(montage_file_name))
+        # collage.save(
+            # CONF.collage.full_mask.format(timestamp,
+                                            # next(CONF.collage.counter)))
         time.sleep(CONF.montage.interval)
 
 
