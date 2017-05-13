@@ -23,9 +23,9 @@ def paster(background, size):
             def run(image=background):
                 for _ in xrange(4):
                     position, photo_file_name = in_queue.get()
-                    future_image = process_executor.submit(
-                        _paste, image, size, position, photo_file_name)
-                return future_image.result()
+                    image = process_executor.submit(
+                        _paste, image, size, position, photo_file_name).result()
+                return image
 
             class Thing:
                 paste = in_queue.put
