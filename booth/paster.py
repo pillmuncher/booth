@@ -29,6 +29,5 @@ def paste_images(background, size):
     in_queue = Queue.Queue()
     out_queue = Queue.Queue()
     thread = threading.Thread(target=run)
-    thread.daemon = True
     thread.start()
-    return in_queue.put, out_queue.get
+    return in_queue.put, out_queue.get, thread.join

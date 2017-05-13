@@ -393,10 +393,12 @@ class PhotoBooth(object):
 
     def click_event(self):
         timestamp = datetime.datetime.now()
-        montage_paste, montage_result = paste_images(CONF.montage.image,
-                                                     CONF.montage.photo.size)
-        collage_paste, collage_result = paste_images(CONF.collage.image,
-                                                     CONF.collage.photo.size)
+        montage_paste, montage_result, montage_join = paste_images(
+            CONF.montage.image,
+            CONF.montage.photo.size)
+        collage_paste, collage_result, collage_join = paste_images(
+            CONF.collage.image,
+            CONF.collage.photo.size)
         with self.click_mode():
             for i in xrange(4):
                 self.count_down(i + 1)
@@ -412,6 +414,8 @@ class PhotoBooth(object):
         collage_result().save(
             CONF.collage.full_mask.format(timestamp,
                                           next(CONF.collage.counter)))
+        montage_join()
+        collage_join()
         time.sleep(CONF.montage.interval)
 
 
