@@ -21,8 +21,14 @@ import pygame
 import RPi.GPIO as GPIO
 import picamera
 
+from concurrent.futures import ProcessPoolExecutor
+
 
 GPHOTO2_CMD_LINE = ['gphoto2', '--capture-image-and-download', '--filename']
+
+
+def noop(*a, **k):
+    pass
 
 
 class Config(object):
@@ -389,6 +395,8 @@ class PhotoBooth(object):
         timestamp = datetime.datetime.now()
         file_names = []
         with self.click_mode():
+            with ProcessPoolExecutor(max_workers=1) as executor:
+                executor.submit(noop).result()
             for i in xrange(4):
                 self.count_down(i + 1)
                 file_names.append(CONF.photo.file_mask.format(timestamp, i + 1))
@@ -396,22 +404,22 @@ class PhotoBooth(object):
                     raise RuntimeError("gphoto2 couldn't capture image!")
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
         montage = CONF.montage.image.copy()
-        collage = CONF.collage.image.copy()
+        # collage = CONF.collage.image.copy()
         for i in xrange(4):
             photo = Image.open(file_names[i])
             montage.paste(photo.resize(CONF.montage.photo.size,
                                         Image.ANTIALIAS),
                             CONF.montage.photo.positions[i])
-            collage.paste(photo.resize(CONF.collage.photo.size,
-                                        Image.ANTIALIAS),
-                            CONF.collage.photo.positions[i])
+            # collage.paste(photo.resize(CONF.collage.photo.size,
+                                        # Image.ANTIALIAS),
+                            # CONF.collage.photo.positions[i])
         montage = Image.blend(montage, CONF.etc.watermark.image, .25)
         montage_file_name = CONF.montage.full_mask.format(timestamp)
         montage.save(montage_file_name)
         self.show_image(pygame.image.load(montage_file_name))
-        collage.save(
-            CONF.collage.full_mask.format(timestamp,
-                                            next(CONF.collage.counter)))
+        # collage.save(
+            # CONF.collage.full_mask.format(timestamp,
+                                            # next(CONF.collage.counter)))
         time.sleep(CONF.montage.interval)
 
 
