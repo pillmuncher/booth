@@ -17,18 +17,21 @@ def _paste(background, size, position, photo_file_name):
 
 @contextlib.contextmanager
 def paster(background, size):
+    class Thing:
+        pass
     in_queue = Queue.Queue()
     with ThreadPoolExecutor(max_workers=1) as thread_executor:
         with ProcessPoolExecutor(max_workers=1) as process_executor:
             def run(image=background):
                 for _ in xrange(4):
                     position, photo_file_name = in_queue.get()
-                    image = process_executor.submit(
-                        _paste, image, size, position, photo_file_name).result()
+                    image = process_executor.submit(_paste,
+                                                    image,
+                                                    size,
+                                                    position,
+                                                    photo_file_name).result()
                 return image
-
-            class Thing:
-                paste = in_queue.put
-                result = thread_executor.submit(run).result
-
-            yield Thing()
+            thing = Thing()
+            thing.paste = in_queue.put
+            thing.result = thread_executor.submit(run).result
+            yield thing
