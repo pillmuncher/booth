@@ -406,10 +406,10 @@ class PhotoBooth(object):
                         if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
                             raise RuntimeError(
                                 "gphoto2 couldn't capture image!")
-                        montp.paste((CONF.montage.photo.positions[i],
-                                    photo_file_name))
-                        collp.paste((CONF.collage.photo.positions[i],
-                                    photo_file_name))
+                        montp.paste(
+                            (CONF.montage.photo.positions[i], photo_file_name))
+                        collp.paste(
+                            (CONF.collage.photo.positions[i], photo_file_name))
                     self.show_image(
                         pygame.image.load(CONF.etc.black.full_image_file))
                 montage = Image.blend(
