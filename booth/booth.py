@@ -393,12 +393,10 @@ class PhotoBooth(object):
 
     def click_event(self):
         timestamp = datetime.datetime.now()
-        montage_paste, montage_result, montage_join = paste_images(
-            CONF.montage.image,
-            CONF.montage.photo.size)
-        collage_paste, collage_result, collage_join = paste_images(
-            CONF.collage.image,
-            CONF.collage.photo.size)
+        montage_paste, montage_result = paste_images(CONF.montage.image,
+                                                     CONF.montage.photo.size)
+        collage_paste, collage_result = paste_images(CONF.collage.image,
+                                                     CONF.collage.photo.size)
         with self.click_mode():
             for i in xrange(4):
                 self.count_down(i + 1)
@@ -410,12 +408,14 @@ class PhotoBooth(object):
             montage = Image.blend(montage_result(), CONF.etc.watermark.image, .25)
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
             self.show_image(montage)
-        montage.save(CONF.montage.full_mask.format(timestamp))
-        collage_result().save(
-            CONF.collage.full_mask.format(timestamp,
-                                          next(CONF.collage.counter)))
-        montage_join()
-        collage_join()
+
+        def save():
+            montage.save(
+                CONF.montage.full_mask.format(timestamp))
+            collage_result().save(
+                CONF.collage.full_mask.format(timestamp,
+                                              next(CONF.collage.counter)))
+        threading.Thread(target=save).start()
         time.sleep(CONF.montage.interval)
 
 
