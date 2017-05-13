@@ -35,6 +35,7 @@ def paster(background, size):
                                                     size,
                                                     position,
                                                     photo_file_name).result()
+                    print("???", image)
                 return image
             thing = Thing()
             thing.paste = queue.put
