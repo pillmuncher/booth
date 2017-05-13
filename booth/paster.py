@@ -3,10 +3,10 @@
 
 from __future__ import print_function, unicode_literals, division
 
+import contextlib
 import Queue
-import threading
 
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from PIL import Image
 
 
@@ -15,20 +15,20 @@ def _paste(background, size, position, photo_file_name):
     return background.paste(photo, position)
 
 
-def paste_images(background, size):
-    def run(image=background):
-        with ProcessPoolExecutor(max_workers=1) as executor:
-            for _ in xrange(4):
-                position, photo_file_name = in_queue.get()
-                image = executor.submit(_paste,
-                                        image,
-                                        size,
-                                        position,
-                                        photo_file_name).result()
-        out_queue.put(image)
+@contextlib.contextmanager
+def paster(background, size):
     in_queue = Queue.Queue()
-    out_queue = Queue.Queue()
-    thread = threading.Thread(target=run)
-    thread.daemon = True
-    thread.start()
-    return in_queue.put, out_queue.get
+    with ThreadPoolExecutor(max_workers=1) as thread_executor:
+        with ProcessPoolExecutor(max_workers=1) as process_executor:
+            def run(image=background):
+                for _ in xrange(4):
+                    position, photo_file_name = in_queue.get()
+                    future_image = process_executor.submit(
+                        _paste, image, size, position, photo_file_name)
+                return future_image.result()
+
+            class Thing:
+                paste = in_queue.put
+                result = thread_executor.submit(run).result
+
+            yield Thing()

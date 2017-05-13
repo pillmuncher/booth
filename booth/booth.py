@@ -21,14 +21,14 @@ import pygame
 import RPi.GPIO as GPIO
 import picamera
 
-from concurrent.futures import ProcessPoolExecutor
+from paster import paster
 
 
-GPHOTO2_CMD_LINE = ['gphoto2', '--capture-image-and-download', '--filename']
+def identity(x):
+    return x
 
 
-def noop(*a, **k):
-    pass
+GPHOTO2_CMD = ['gphoto2', '--capture-image-and-download', '--filename']
 
 
 class Config(object):
@@ -361,7 +361,7 @@ class PhotoBooth(object):
         self.show_overlay(
             CONF.etc.prepare.full_image_mask.format(n),
             CONF.etc.prepare.image_position,
-            1,
+            2,
         )
         for i in [3, 2, 1]:
             self.play_sound(CONF.etc.countdown.full_sound_mask.format(i))
@@ -377,7 +377,7 @@ class PhotoBooth(object):
         self.show_overlay(
             CONF.etc.smile.full_image_file,
             CONF.etc.smile.image_position,
-            .5,
+            1.5,
         )
 
     @contextlib.contextmanager
@@ -393,35 +393,30 @@ class PhotoBooth(object):
 
     def click_event(self):
         timestamp = datetime.datetime.now()
-        file_names = []
-        with ProcessPoolExecutor(max_workers=1) as executor1:
-            with ProcessPoolExecutor(max_workers=1) as executor2:
+        montage_file_name = CONF.montage.full_mask.format(timestamp)
+        collage_file_name = CONF.collage.full_mask.format(
+            timestamp, next(CONF.collage.counter))
+        with paster(CONF.montage.image, CONF.montage.photo.size) as montp:
+            with paster(CONF.collage.image, CONF.collage.photo.size) as collp:
                 with self.click_mode():
                     for i in xrange(4):
                         self.count_down(i + 1)
-                        executor1.submit(noop).result()
-                        file_names.append(CONF.photo.file_mask.format(timestamp, i + 1))
-                        if subprocess.call(GPHOTO2_CMD_LINE + file_names[-1:]):
-                            raise RuntimeError("gphoto2 couldn't capture image!")
-                        executor2.submit(noop).result()
-                    self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
-        montage = CONF.montage.image.copy()
-        # collage = CONF.collage.image.copy()
-        for i in xrange(4):
-            photo = Image.open(file_names[i])
-            montage.paste(photo.resize(CONF.montage.photo.size,
-                                        Image.ANTIALIAS),
-                            CONF.montage.photo.positions[i])
-            # collage.paste(photo.resize(CONF.collage.photo.size,
-                                        # Image.ANTIALIAS),
-                            # CONF.collage.photo.positions[i])
-        montage = Image.blend(montage, CONF.etc.watermark.image, .25)
-        montage_file_name = CONF.montage.full_mask.format(timestamp)
-        montage.save(montage_file_name)
-        self.show_image(pygame.image.load(montage_file_name))
-        # collage.save(
-            # CONF.collage.full_mask.format(timestamp,
-                                            # next(CONF.collage.counter)))
+                        photo_file_name = CONF.photo.file_mask.format(
+                            timestamp, i + 1)
+                        if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
+                            raise RuntimeError(
+                                "gphoto2 couldn't capture image!")
+                        montp.paste(CONF.montage.photo.positions[i],
+                                    photo_file_name)
+                        collp.paste(CONF.collage.photo.positions[i],
+                                    photo_file_name)
+                    self.show_image(
+                        pygame.image.load(CONF.etc.black.full_image_file))
+                montage = Image.blend(
+                    montp.result(), CONF.etc.watermark.image, .25)
+                montage.save(montage_file_name)
+                self.show_image(pygame.image.load(montage_file_name))
+                collp.result().save(collage_file_name)
         time.sleep(CONF.montage.interval)
 
 
