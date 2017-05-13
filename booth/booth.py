@@ -408,14 +408,10 @@ class PhotoBooth(object):
         montage = Image.blend(montage_result(), CONF.etc.watermark.image, .25)
         self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
         self.show_image(montage)
-
-        def save():
-            montage.save(
-                CONF.montage.full_mask.format(timestamp))
-            collage_result().save(
-                CONF.collage.full_mask.format(timestamp,
-                                              next(CONF.collage.counter)))
-        threading.Thread(target=save).start()
+        montage.save(CONF.montage.full_mask.format(timestamp))
+        collage_result().save(
+            CONF.collage.full_mask.format(timestamp,
+                                          next(CONF.collage.counter)))
         time.sleep(CONF.montage.interval)
 
 
