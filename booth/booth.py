@@ -21,12 +21,6 @@ import pygame
 import RPi.GPIO as GPIO
 import picamera
 
-from paster import paste_images
-
-
-def identity(x):
-    return x
-
 
 GPHOTO2_CMD_LINE = ['gphoto2', '--capture-image-and-download', '--filename']
 
@@ -393,27 +387,31 @@ class PhotoBooth(object):
 
     def click_event(self):
         timestamp = datetime.datetime.now()
-        montage_paste, montage_result = paste_images(CONF.montage.image,
-                                                     CONF.montage.photo.size)
-        collage_paste, collage_result = paste_images(CONF.collage.image,
-                                                     CONF.collage.photo.size)
+        file_names = []
         with self.click_mode():
             for i in xrange(4):
                 self.count_down(i + 1)
-                photo_file_name = CONF.photo.file_mask.format(timestamp, i + 1)
-                if subprocess.call(GPHOTO2_CMD_LINE + [photo_file_name]):
+                file_names.append(CONF.photo.file_mask.format(timestamp, i + 1))
+                if subprocess.call(GPHOTO2_CMD_LINE + file_names[-1:]):
                     raise RuntimeError("gphoto2 couldn't capture image!")
-                montage_paste(CONF.montage.photo.positions[i], photo_file_name)
-                collage_paste(CONF.collage.photo.positions[i], photo_file_name)
-            montage = montage_result()
+            montage = CONF.montage.image.copy()
+            collage = CONF.collage.image.copy()
+            for i in xrange(4):
+                photo = Image.open(file_names[i])
+                montage.paste(photo.resize(CONF.montage.photo.size,
+                                           Image.ANTIALIAS),
+                              CONF.montage.photo.positions[i])
+                collage.paste(photo.resize(CONF.collage.photo.size,
+                                           Image.ANTIALIAS),
+                              CONF.collage.photo.positions[i])
             montage = Image.blend(montage, CONF.etc.watermark.image, .25)
             montage_file_name = CONF.montage.full_mask.format(timestamp)
             montage.save(montage_file_name)
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
             self.show_image(pygame.image.load(montage_file_name))
-            collage_file_name = CONF.collage.full_mask.format(
-                timestamp, next(CONF.collage.counter))
-            collage_result().save(collage_file_name)
+            collage.save(
+                CONF.collage.full_mask.format(timestamp,
+                                              next(CONF.collage.counter)))
         time.sleep(CONF.montage.interval)
 
 
