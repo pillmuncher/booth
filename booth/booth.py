@@ -361,7 +361,7 @@ class PhotoBooth(object):
         self.show_overlay(
             CONF.etc.prepare.full_image_mask.format(n),
             CONF.etc.prepare.image_position,
-            2,
+            1,
         )
         for i in [3, 2, 1]:
             self.play_sound(CONF.etc.countdown.full_sound_mask.format(i))
@@ -377,7 +377,7 @@ class PhotoBooth(object):
         self.show_overlay(
             CONF.etc.smile.full_image_file,
             CONF.etc.smile.image_position,
-            1.5,
+            .5,
         )
 
     @contextlib.contextmanager
