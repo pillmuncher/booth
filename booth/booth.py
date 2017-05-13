@@ -355,7 +355,7 @@ class PhotoBooth(object):
         self.show_overlay(
             CONF.etc.prepare.full_image_mask.format(n),
             CONF.etc.prepare.image_position,
-            2,
+            1,
         )
         for i in [3, 2, 1]:
             self.play_sound(CONF.etc.countdown.full_sound_mask.format(i))
@@ -371,7 +371,7 @@ class PhotoBooth(object):
         self.show_overlay(
             CONF.etc.smile.full_image_file,
             CONF.etc.smile.image_position,
-            1.5,
+            .5,
         )
 
     @contextlib.contextmanager
@@ -396,22 +396,22 @@ class PhotoBooth(object):
                     raise RuntimeError("gphoto2 couldn't capture image!")
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
         montage = CONF.montage.image.copy()
-        # collage = CONF.collage.image.copy()
+        collage = CONF.collage.image.copy()
         for i in xrange(4):
             photo = Image.open(file_names[i])
             montage.paste(photo.resize(CONF.montage.photo.size,
                                         Image.ANTIALIAS),
                             CONF.montage.photo.positions[i])
-            # collage.paste(photo.resize(CONF.collage.photo.size,
-                                        # Image.ANTIALIAS),
-                            # CONF.collage.photo.positions[i])
+            collage.paste(photo.resize(CONF.collage.photo.size,
+                                        Image.ANTIALIAS),
+                            CONF.collage.photo.positions[i])
         montage = Image.blend(montage, CONF.etc.watermark.image, .25)
         montage_file_name = CONF.montage.full_mask.format(timestamp)
         montage.save(montage_file_name)
         self.show_image(pygame.image.load(montage_file_name))
-        # collage.save(
-            # CONF.collage.full_mask.format(timestamp,
-                                            # next(CONF.collage.counter)))
+        collage.save(
+            CONF.collage.full_mask.format(timestamp,
+                                            next(CONF.collage.counter)))
         time.sleep(CONF.montage.interval)
 
 
