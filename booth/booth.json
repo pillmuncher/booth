@@ -35,6 +35,7 @@
     "lights": [13, 21, 19, 11]
   },
   "montage": {
+    "file": "/home/pi/Desktop/countdown/montage.png",
     "path": "/media/usb/montage",
     "mask": "{:%Y-%m-%d-%H-%M-%S}.jpg",
     "glob_mask": "*.jpg",
@@ -69,9 +70,6 @@
     "path": "/home/pi/Desktop/countdown",
     "interval": 3,
     "bounce_time": 300,
-    "watermark": {
-        "image_file": "watermark.png"
-    },
     "prepare": {
         "image_mask": "photo_{}.jpg",
         "image_position": [0, 0]

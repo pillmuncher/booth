@@ -66,11 +66,7 @@ def _get_conf():
         (c.montage.x1, c.montage.y2),
         (c.montage.x2, c.montage.y2),
     ]
-    c.montage.image = Image.new(
-        'RGB',
-        c.screen.size,
-        c.montage.background,
-    )
+    c.montage.image = Image.open(c.montage.file)
     c.montage.full_mask = os.path.join(
         c.montage.path,
         c.montage.mask,
@@ -117,15 +113,6 @@ def _get_conf():
     c.etc.black.full_image_file = os.path.join(
         c.etc.path,
         c.etc.black.image_file,
-    )
-    c.etc.watermark_file = os.path.join(
-        c.etc.path,
-        c.etc.watermark.image_file,
-    )
-    c.etc.watermark.image = (
-        Image
-        .open(c.etc.watermark_file)
-        .convert('RGB')
     )
     c.etc.songs.mask = os.path.join(c.etc.songs.dir, c.etc.songs.sound_mask)
     return c
@@ -412,9 +399,7 @@ class PhotoBooth(object):
                             (CONF.collage.photo.positions[i], photo_file_name))
                     self.show_image(
                         pygame.image.load(CONF.etc.black.full_image_file))
-                montage = Image.blend(
-                    montp.result(), CONF.etc.watermark.image, .25)
-                montage.save(montage_file_name)
+                montp.result().save(montage_file_name)
                 self.show_image(pygame.image.load(montage_file_name))
                 collp.result().save(collage_file_name)
         time.sleep(CONF.montage.interval)
