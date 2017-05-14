@@ -56,9 +56,8 @@ def _get_conf():
 
     with open('booth.json', 'r') as config_file:
         c = Config(json.load(config_file))
-    c.photo.size = c.photo.width, c.photo.height
     c.screen.size = c.screen.width, c.screen.height
-    c.screen.rect = 0, 0, c.montage.width, c.montage.height
+    c.photo.size = c.photo.width, c.photo.height
     c.montage.photo.size = c.montage.photo.width, c.montage.photo.height
     c.montage.photo.positions = [
         (c.montage.x1, c.montage.y1),
