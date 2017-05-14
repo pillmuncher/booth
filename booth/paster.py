@@ -26,7 +26,6 @@ def paster(background, size):
     with ThreadPoolExecutor(max_workers=1) as thread_executor:
         with ProcessPoolExecutor(max_workers=1) as process_executor:
             def run(image=background):
-                print('!!!', image)
                 for _ in xrange(4):
                     position, photo_file_name = queue.get()
                     image = process_executor.submit(_paste,
@@ -34,7 +33,6 @@ def paster(background, size):
                                                     size,
                                                     position,
                                                     photo_file_name).result()
-                print('???', image)
                 return image
             thing = Thing()
             thing.paste = queue.put
