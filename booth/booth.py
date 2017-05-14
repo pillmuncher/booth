@@ -58,6 +58,10 @@ def _get_conf():
         c = Config(json.load(config_file))
     c.screen.size = c.screen.width, c.screen.height
     c.photo.size = c.photo.width, c.photo.height
+    c.photo.file_mask = os.path.join(
+        c.photo.path,
+        c.photo.mask,
+    )
     c.montage.photo.size = c.montage.photo.width, c.montage.photo.height
     c.montage.photo.positions = [
         (c.montage.x1, c.montage.y1),
@@ -74,10 +78,6 @@ def _get_conf():
         c.montage.path,
         c.montage.glob_mask,
     )
-    c.collage.full_mask = os.path.join(
-        c.collage.path,
-        c.collage.mask,
-    )
     c.collage.image = Image.open(c.collage.file)
     c.collage.photo.size = c.collage.photo.width, c.collage.photo.height
     c.collage.photo.positions = [
@@ -86,13 +86,13 @@ def _get_conf():
         (c.collage.x1, c.montage.y2),
         (c.collage.x2, c.montage.y2),
     ]
+    c.collage.full_mask = os.path.join(
+        c.collage.path,
+        c.collage.mask,
+    )
     c.collage.counter = itertools.count(
         get_first_collage_number(
             c.collage.full_mask.format('*', '*'), c.collage.pattern))
-    c.photo.file_mask = os.path.join(
-        c.photo.path,
-        c.photo.mask,
-    )
     c.etc.prepare.full_image_mask = os.path.join(
         c.etc.path,
         c.etc.prepare.image_mask,
