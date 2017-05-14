@@ -361,14 +361,14 @@ class PhotoBooth(object):
         self.show_overlay(
             CONF.etc.prepare.full_image_mask.format(n),
             CONF.etc.prepare.image_position,
-            1,
+            1.2,
         )
         for i in [3, 2, 1]:
             self.play_sound(CONF.etc.countdown.full_sound_mask.format(i))
             self.show_overlay(
                 CONF.etc.countdown.full_image_mask.format(i),
                 CONF.etc.countdown.image_position,
-                1,
+                .7,
             )
         if CONF.etc.songs.enabled:
             file_names = glob.glob(CONF.etc.songs.mask)
