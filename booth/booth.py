@@ -398,7 +398,6 @@ class PhotoBooth(object):
                             (CONF.collage.photo.positions[i], photo_file_name))
                     self.show_image(
                         pygame.image.load(CONF.etc.black.full_image_file))
-                sys.exit()
                 montp.result().save(montage_file_name)
                 self.show_image(pygame.image.load(montage_file_name))
                 collp.result().save(collage_file_name)
