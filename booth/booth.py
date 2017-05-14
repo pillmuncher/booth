@@ -402,7 +402,7 @@ class PhotoBooth(object):
                 print('!!!', montage)
                 time.sleep(3)
                 sys.exit()
-                .save(montage_file_name)
+                # .save(montage_file_name)
                 self.show_image(pygame.image.load(montage_file_name))
                 collp.result().save(collage_file_name)
         time.sleep(CONF.montage.interval)
