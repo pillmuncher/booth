@@ -28,6 +28,8 @@ def _paste(bg_file_name, img_file_name, queue, n, size):
 def paster(bg_file_name, img_file_name, photo_size):
     with ProcessPoolExecutor(max_workers=1) as executor:
         queue = multiprocessing.Queue()
+        print('***', 'queue:', queue)
         future = executor.submit(
             _paste, bg_file_name, img_file_name, queue, 4, photo_size)
+        print('***', 'future:', future)
         yield Bunch(paste=queue.put, wait=future.result)

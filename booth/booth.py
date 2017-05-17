@@ -376,6 +376,8 @@ class PhotoBooth(object):
         montage_file_name = CONF.montage.full_mask.format(timestamp)
         collage_file_name = CONF.collage.full_mask.format(
             timestamp, next(CONF.collage.counter))
+        print('???', 'montage file:', montage_file_name)
+        print('???', 'collage file:', collage_file_name)
         with paster(CONF.montage.file,
                     montage_file_name,
                     CONF.montage.photo.size) as montp:
@@ -396,9 +398,9 @@ class PhotoBooth(object):
                             (CONF.collage.photo.positions[i], photo_file_name))
                     self.show_image(
                         pygame.image.load(CONF.etc.black.full_image_file))
-                montp.wait()
+                    print('!!!', 'montage:', montp.wait())
                 self.show_image(pygame.image.load(montage_file_name))
-                collp.wait()
+                print('!!!', 'collage:', collp.wait())
         time.sleep(CONF.montage.interval)
 
 
