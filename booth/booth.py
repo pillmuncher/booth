@@ -24,6 +24,10 @@ import picamera
 from paster import paster
 
 
+def identity(x):
+    return x
+
+
 GPHOTO2_CMD = ['gphoto2', '--capture-image-and-download', '--filename']
 
 
@@ -65,6 +69,7 @@ def _get_conf():
         (c.montage.x1, c.montage.y2),
         (c.montage.x2, c.montage.y2),
     ]
+    c.montage.image = Image.open(c.montage.file)
     c.montage.full_mask = os.path.join(
         c.montage.path,
         c.montage.mask,
@@ -73,6 +78,7 @@ def _get_conf():
         c.montage.path,
         c.montage.glob_mask,
     )
+    c.collage.image = Image.open(c.collage.file)
     c.collage.photo.size = c.collage.photo.width, c.collage.photo.height
     c.collage.photo.positions = [
         (c.collage.x1, c.montage.y1),
@@ -376,14 +382,8 @@ class PhotoBooth(object):
         montage_file_name = CONF.montage.full_mask.format(timestamp)
         collage_file_name = CONF.collage.full_mask.format(
             timestamp, next(CONF.collage.counter))
-        print('???', 'montage file:', montage_file_name)
-        print('???', 'collage file:', collage_file_name)
-        with paster(CONF.montage.file,
-                    montage_file_name,
-                    CONF.montage.photo.size) as montp:
-            with paster(CONF.collage.file,
-                        collage_file_name,
-                        CONF.collage.photo.size) as collp:
+        with paster(CONF.montage.image, CONF.montage.photo.size) as montp:
+            with paster(CONF.collage.image, CONF.collage.photo.size) as collp:
                 with self.click_mode():
                     for i in xrange(4):
                         self.count_down(i + 1)
@@ -398,9 +398,9 @@ class PhotoBooth(object):
                             (CONF.collage.photo.positions[i], photo_file_name))
                     self.show_image(
                         pygame.image.load(CONF.etc.black.full_image_file))
-                    print('!!!', 'montage:', montp.wait())
+                montp.result().save(montage_file_name)
                 self.show_image(pygame.image.load(montage_file_name))
-                print('!!!', 'collage:', collp.wait())
+                collp.result().save(collage_file_name)
         time.sleep(CONF.montage.interval)
 
 

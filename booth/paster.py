@@ -4,30 +4,37 @@
 from __future__ import print_function, unicode_literals, division
 
 import contextlib
-import multiprocessing
+import Queue
 
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from PIL import Image
 
 
-class Bunch(object):
-    def __init__(self, **k):
-        self.__dict__.update(k)
+class Thing:
+    pass
 
 
-def _paste(bg_file_name, img_file_name, queue, n, size):
-    image = Image.open(bg_file_name)
-    for _ in xrange(n):
-        pos, file_name = queue.get()
-        image.paste(Image.open(file_name).resize(size, Image.ANTIALIAS), pos)
-    image.save(img_file_name)
-    return
+def _paste(background, size, position, photo_file_name):
+    photo = Image.open(photo_file_name).resize(size, Image.ANTIALIAS)
+    background.paste(photo, position)
+    return background
 
 
 @contextlib.contextmanager
-def paster(bg_file_name, img_file_name, photo_size):
-    with ProcessPoolExecutor(max_workers=1) as executor:
-        queue = multiprocessing.Queue()
-        future = executor.submit(
-            _paste, bg_file_name, img_file_name, queue, 4, photo_size)
-        yield Bunch(paste=queue.put, wait=future.result)
+def paster(background, size):
+    queue = Queue.Queue()
+    with ThreadPoolExecutor(max_workers=1) as thread_executor:
+        with ProcessPoolExecutor(max_workers=1) as process_executor:
+            def run(image=background):
+                for _ in xrange(4):
+                    position, photo_file_name = queue.get()
+                    image = process_executor.submit(_paste,
+                                                    image,
+                                                    size,
+                                                    position,
+                                                    photo_file_name).result()
+                return image
+            thing = Thing()
+            thing.paste = queue.put
+            thing.result = thread_executor.submit(run).result
+            yield thing
