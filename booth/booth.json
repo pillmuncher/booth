@@ -55,10 +55,10 @@
     "path": "/home/pi/Desktop/Collage",
     "mask": "{}-{}.jpg",
     "pattern": "^.*-(\\d+)\\.jpg$",
-    "x1": 100,
-    "x2": 1948,
-    "y1": 100,
-    "y2": 1440,
+    "x1": 50,
+    "x2": 1848,
+    "y1": 150,
+    "y2": 1540,
     "photo": {
       "width": 1748,
       "height": 1240
