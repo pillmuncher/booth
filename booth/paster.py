@@ -21,7 +21,7 @@ def _paste(background, size, position, photo_file_name):
 
 
 @contextlib.contextmanager
-def paster(background, size):
+def paster_old(background, size):
     queue = Queue.Queue()
     with ThreadPoolExecutor(max_workers=1) as thread_executor:
         with ProcessPoolExecutor(max_workers=1) as process_executor:
@@ -41,7 +41,7 @@ def paster(background, size):
 
 
 @contextlib.contextmanager
-def paster_new(background, size):
+def paster(background, size):
     queue = Queue.Queue()
     with ThreadPoolExecutor(max_workers=1) as thread_executor:
         with ProcessPoolExecutor(max_workers=1) as process_executor:
