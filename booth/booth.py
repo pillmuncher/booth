@@ -402,7 +402,7 @@ class PhotoBooth(object):
         lights_off(CONF.photo.lights)
         self._status_led = CONF.led.yellow
 
-    def click_event_old(self):
+    def click_event(self):
         timestamp = datetime.datetime.now()
         montage_file_name = CONF.montage.full_mask.format(timestamp)
         collage_file_name = CONF.collage.full_mask.format(
@@ -428,7 +428,7 @@ class PhotoBooth(object):
                 collp.result().save(collage_file_name)
         time.sleep(CONF.montage.interval)
 
-    def click_event(self):
+    def click_event_new(self):
         timestamp = datetime.datetime.now()
         montage_file_name = CONF.montage1.full_mask.format(timestamp)
         collage_file_name = CONF.collage1.full_mask.format(
