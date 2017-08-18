@@ -64,32 +64,6 @@
       "height": 1240
     }
   },
-  "montage1": {
-    "file": "/home/pi/Desktop/countdown/montage.jpg",
-    "path": "/media/usb/montage",
-    "mask": "{:%Y-%m-%d-%H-%M-%S}.jpg",
-    "glob_mask": "*.jpg",
-    "interval": 7,
-    "background": [200, 200, 200],
-    "x": 44,
-    "y": 150,
-    "photo": {
-      "width": 1142,
-      "height": 760
-    }
-  },
-  "collage1": {
-    "file": "/home/pi/Desktop/countdown/collage.jpg",
-    "path": "/home/pi/Desktop/Collage",
-    "mask": "{}-{}.jpg",
-    "pattern": "^.*-(\\d+)\\.jpg$",
-    "x": 50,
-    "y": 150,
-    "photo": {
-      "width": 3546,
-      "height": 2630
-    }
-  },
   "etc": {
     "path": "/home/pi/Desktop/countdown",
     "interval": 3,
