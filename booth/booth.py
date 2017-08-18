@@ -428,6 +428,7 @@ class PhotoBooth(object):
                 collp.result().save(collage_file_name)
         time.sleep(CONF.montage.interval)
 
+
     def click_event(self):
         timestamp = datetime.datetime.now()
         montage_file_name = CONF.montage1.full_mask.format(timestamp)
