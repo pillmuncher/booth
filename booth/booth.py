@@ -430,11 +430,11 @@ class PhotoBooth(object):
 
     def click_event(self):
         timestamp = datetime.datetime.now()
-        montage_file_name = CONF.montage1.full_mask.format(timestamp)
-        collage_file_name = CONF.collage1.full_mask.format(
-            timestamp, next(CONF.collage1.counter))
-        with paster(CONF.montage1.image, CONF.montage1.photo.size) as montp:
-            with paster(CONF.collage1.image, CONF.collage1.photo.size) as collp:
+        montage_file_name = CONF.montage.full_mask.format(timestamp)
+        collage_file_name = CONF.collage.full_mask.format(
+            timestamp, next(CONF.collage.counter))
+        with paster(CONF.montage.image, CONF.montage.photo.size) as montp:
+            with paster(CONF.collage.image, CONF.collage.photo.size) as collp:
                 with self.click_mode():
                     for i in xrange(1):
                         self.count_down(i + 1)
@@ -444,15 +444,15 @@ class PhotoBooth(object):
                             raise RuntimeError(
                                 "gphoto2 couldn't capture image!")
                         montp.paste(
-                            (CONF.montage1.photo.positions[i], photo_file_name))
+                            (CONF.montage.photo.positions[i], photo_file_name))
                         collp.paste(
-                            (CONF.collage1.photo.positions[i], photo_file_name))
+                            (CONF.collage.photo.positions[i], photo_file_name))
                     self.show_image(
                         pygame.image.load(CONF.etc.black.full_image_file))
                 montp.result().save(montage_file_name)
                 self.show_image(pygame.image.load(montage_file_name))
                 collp.result().save(collage_file_name)
-        time.sleep(CONF.montage1.interval)
+        time.sleep(CONF.montage.interval)
 
 
 def main():
