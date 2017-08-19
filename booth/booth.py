@@ -106,7 +106,7 @@ def _get_conf():
     )
     c.collage1.image = Image.open(c.collage1.file)
     c.collage1.photo.size = c.collage1.photo.width, c.collage1.photo.height
-    c.collage1.photo.positions= c.collage1.x, c.collage1.y
+    c.collage1.photo.positions = c.collage1.x, c.collage1.y
     c.collage1.full_mask = os.path.join(
         c.collage1.path,
         c.collage1.mask,
@@ -365,11 +365,11 @@ class PhotoBooth(object):
         self._camera.remove_overlay(overlay)
 
     def count_down(self, n):
-        self.show_overlay(
-            CONF.etc.prepare.full_image_mask.format(n),
-            CONF.etc.prepare.image_position,
-            1.2,
-        )
+        # self.show_overlay(
+            # CONF.etc.prepare.full_image_mask.format(n),
+            # CONF.etc.prepare.image_position,
+            # 1.2,
+        # )
         for i in [3, 2, 1]:
             self.play_sound(CONF.etc.countdown.full_sound_mask.format(i))
             self.show_overlay(
@@ -423,7 +423,6 @@ class PhotoBooth(object):
                 self.show_image(pygame.image.load(montage_file_name))
                 collp.result().save(collage_file_name)
         time.sleep(CONF.montage.interval)
-
 
     def click_event(self):
         timestamp = datetime.datetime.now()
