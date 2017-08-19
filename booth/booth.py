@@ -443,18 +443,18 @@ class PhotoBooth(object):
                      .resize(CONF.montage1.photo.size, Image.ANTIALIAS),
                 CONF.montage1.photo.position)
             logging.debug('Montagebild erzeugt')
-            # collage = CONF.collage1.image.copy()
-            # collage.paste(
-                # Image.open(photo_file_name)
-                     # .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
-                # CONF.collage1.photo.position)
-            # logging.debug('Collagebild erzeugt')
+            collage = CONF.collage1.image.copy()
+            collage.paste(
+                Image.open(photo_file_name)
+                     .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
+                CONF.collage1.photo.position)
+            logging.debug('Collagebild erzeugt')
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
             montage.save(montage_file_name)
             logging.debug('Montagebild gespeichert')
             self.show_image(pygame.image.load(montage_file_name))
-            # collage.save(collage_file_name)
-            # logging.debug('Collagebild gespeichert')
+            collage.save(collage_file_name)
+            logging.debug('Collagebild gespeichert')
         time.sleep(CONF.montage1.interval)
 
 
