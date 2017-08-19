@@ -94,9 +94,7 @@ def _get_conf():
         get_first_collage_number(
             c.collage.full_mask.format('*', '*'), c.collage.pattern))
     c.montage1.photo.size = c.montage1.photo.width, c.montage1.photo.height
-    c.montage1.photo.positions = [
-        (c.montage1.x, c.montage1.y),
-    ]
+    c.montage1.photo.position = c.montage1.x, c.montage1.y
     c.montage1.image = Image.open(c.montage1.file)
     c.montage1.full_mask = os.path.join(
         c.montage1.path,
@@ -108,9 +106,7 @@ def _get_conf():
     )
     c.collage1.image = Image.open(c.collage1.file)
     c.collage1.photo.size = c.collage1.photo.width, c.collage1.photo.height
-    c.collage1.photo.positions = [
-        (c.collage1.x, c.collage1.y),
-    ]
+    c.collage1.photo.positions= c.collage1.x, c.collage1.y
     c.collage1.full_mask = os.path.join(
         c.collage1.path,
         c.collage1.mask,
@@ -437,19 +433,15 @@ class PhotoBooth(object):
         with paster(CONF.montage1.image, CONF.montage1.photo.size) as montp:
             with paster(CONF.collage1.image, CONF.collage1.photo.size) as collp:
                 with self.click_mode():
-                    for i in xrange(1):
-                        self.count_down(i + 1)
-                        photo_file_name = CONF.photo.file_mask.format(
-                            timestamp, i + 1)
-                        if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
-                            raise RuntimeError(
-                                "gphoto2 couldn't capture image!")
-                        montp.paste(
-                            (CONF.montage1.photo.positions[i], photo_file_name))
-                        collp.paste(
-                            (CONF.collage1.photo.positions[i], photo_file_name))
-                    self.show_image(
-                        pygame.image.load(CONF.etc.black.full_image_file))
+                    self.count_down(1)
+                    photo_file_name = CONF.photo.file_mask.format(timestamp, 1)
+                    if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
+                        raise RuntimeError(
+                            "gphoto2 couldn't capture image!")
+                    montp.paste((CONF.montage1.photo.position, photo_file_name))
+                    collp.paste((CONF.collage1.photo.position, photo_file_name))
+                self.show_image(
+                    pygame.image.load(CONF.etc.black.full_image_file))
                 montp.result().save(montage_file_name)
                 self.show_image(pygame.image.load(montage_file_name))
                 collp.result().save(collage_file_name)
