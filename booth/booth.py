@@ -429,21 +429,25 @@ class PhotoBooth(object):
         montage_file_name = CONF.montage1.full_mask.format(timestamp)
         collage_file_name = CONF.collage1.full_mask.format(
             timestamp, next(CONF.collage1.counter))
-        with paster(CONF.montage1.image, CONF.montage1.photo.size) as montp:
-            with paster(CONF.collage1.image, CONF.collage1.photo.size) as collp:
-                with self.click_mode():
-                    self.count_down(1)
-                    photo_file_name = CONF.photo.file_mask.format(timestamp, 1)
-                    if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
-                        raise RuntimeError(
-                            "gphoto2 couldn't capture image!")
-                    montp.paste((CONF.montage1.photo.position, photo_file_name))
-                    collp.paste((CONF.collage1.photo.position, photo_file_name))
-                self.show_image(
-                    pygame.image.load(CONF.etc.black.full_image_file))
-                montp.result().save(montage_file_name)
-                self.show_image(pygame.image.load(montage_file_name))
-                collp.result().save(collage_file_name)
+        with self.click_mode():
+            self.count_down(1)
+            photo_file_name = CONF.photo.file_mask.format(timestamp, 1)
+            if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
+                raise RuntimeError("gphoto2 couldn't capture image!")
+            montage = CONF.montage1.image.copy()
+            montage.paste(
+                Image.open(photo_file_name)
+                     .resize(CONF.montage1.photo.size, Image.ANTIALIAS),
+                CONF.montage1.photo.position)
+            collage = CONF.collage1.image.copy()
+            collage.paste(
+                Image.open(photo_file_name)
+                     .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
+                CONF.collage1.photo.position)
+            self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
+            montage.save(montage_file_name)
+            self.show_image(pygame.image.load(montage_file_name))
+            collage.save(collage_file_name)
         time.sleep(CONF.montage1.interval)
 
 
