@@ -298,7 +298,7 @@ class PhotoBooth(object):
         pygame.display.flip()
 
     def show_random_montage(self):
-        file_mask = CONF.montage.full_glob_mask
+        file_mask = CONF.montage1.full_glob_mask
         file_names = glob.glob(file_mask)
         file_name = random.choice(file_names)
         image = pygame.image.load(file_name)
