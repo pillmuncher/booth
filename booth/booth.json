@@ -66,7 +66,7 @@
   },
   "montage1": {
     "file": "/home/pi/Desktop/countdown/montage.jpg",
-    "path": "/media/usb/montage",
+    "path": "/home/pi/Desktop/montage",
     "mask": "{:%Y-%m-%d-%H-%M-%S}.jpg",
     "glob_mask": "*.jpg",
     "interval": 7,
