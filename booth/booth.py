@@ -8,6 +8,7 @@ import datetime
 import glob
 import itertools
 import json
+import logging
 import os.path
 import re
 import Queue
@@ -432,26 +433,33 @@ class PhotoBooth(object):
         with self.click_mode():
             self.count_down(1)
             photo_file_name = CONF.photo.file_mask.format(timestamp, 1)
+            logging.debug('photo_file_name: {}'.format(photo_file_name))
             if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
+                logging.error("gphoto2 couldn't capture image!")
                 raise RuntimeError("gphoto2 couldn't capture image!")
             montage = CONF.montage1.image.copy()
             montage.paste(
                 Image.open(photo_file_name)
                      .resize(CONF.montage1.photo.size, Image.ANTIALIAS),
                 CONF.montage1.photo.position)
+            logging.debug('Montagebild erzeugt')
             collage = CONF.collage1.image.copy()
             collage.paste(
                 Image.open(photo_file_name)
                      .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
                 CONF.collage1.photo.position)
+            logging.debug('Collagebild erzeugt')
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
             montage.save(montage_file_name)
+            logging.debug('Montagebild gespeichert')
             self.show_image(pygame.image.load(montage_file_name))
             collage.save(collage_file_name)
+            logging.debug('Collagebild gespeichert')
         time.sleep(CONF.montage1.interval)
 
 
 def main():
+    logging.basicConfig(filename='booth.log', level=logging.DEBUG)
     with PhotoBooth() as booth:
         return booth.event_loop()
 
