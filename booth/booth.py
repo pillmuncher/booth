@@ -107,7 +107,7 @@ def _get_conf():
     )
     c.collage1.image = Image.open(c.collage1.file)
     c.collage1.photo.size = c.collage1.photo.width, c.collage1.photo.height
-    c.collage1.photo.positions = c.collage1.x, c.collage1.y
+    c.collage1.photo.position = c.collage1.x, c.collage1.y
     c.collage1.full_mask = os.path.join(
         c.collage1.path,
         c.collage1.mask,
