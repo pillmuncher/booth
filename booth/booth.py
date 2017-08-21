@@ -428,8 +428,8 @@ class PhotoBooth(object):
     def click_event(self):
         timestamp = datetime.datetime.now()
         montage_file_name = CONF.montage1.full_mask.format(timestamp)
-        collage_file_name = CONF.collage1.full_mask.format(
-            timestamp, next(CONF.collage1.counter))
+        # collage_file_name = CONF.collage1.full_mask.format(
+            # timestamp, next(CONF.collage1.counter))
         with self.click_mode():
             self.count_down(1)
             photo_file_name = CONF.photo.file_mask.format(timestamp, 1)
@@ -444,17 +444,17 @@ class PhotoBooth(object):
                      .resize(CONF.montage1.photo.size, Image.ANTIALIAS),
                 CONF.montage1.photo.position)
             logging.debug('Montagebild erzeugt')
-            collage = CONF.collage1.image.copy()
-            collage.paste(
-                Image.open(photo_file_name)
-                     .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
-                CONF.collage1.photo.position)
-            logging.debug('Collagebild erzeugt')
+            # collage = CONF.collage1.image.copy()
+            # collage.paste(
+                # Image.open(photo_file_name)
+                     # .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
+                # CONF.collage1.photo.position)
+            # logging.debug('Collagebild erzeugt')
             montage.save(montage_file_name)
             logging.debug('Montagebild gespeichert')
             self.show_image(pygame.image.load(montage_file_name))
-            collage.save(collage_file_name)
-            logging.debug('Collagebild gespeichert')
+            # collage.save(collage_file_name)
+            # logging.debug('Collagebild gespeichert')
         time.sleep(CONF.montage1.interval)
 
 
