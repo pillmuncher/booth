@@ -2,7 +2,7 @@
 
 sleep 4
 
-python booth.py
+python /home/pi/booth/booth/booth.py
 
 if [ $? -eq 64 ]
 then

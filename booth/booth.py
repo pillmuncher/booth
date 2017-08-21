@@ -441,13 +441,13 @@ class PhotoBooth(object):
         montage = CONF.montage1.image.copy()
         montage.paste(
             Image.open(photo_file_name)
-                    .resize(CONF.montage1.photo.size, Image.ANTIALIAS),
+                 .resize(CONF.montage1.photo.size, Image.ANTIALIAS),
             CONF.montage1.photo.position)
         logging.debug('Montagebild erzeugt')
         # collage = CONF.collage1.image.copy()
         # collage.paste(
             # Image.open(photo_file_name)
-                    # .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
+                 # .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
             # CONF.collage1.photo.position)
         # logging.debug('Collagebild erzeugt')
         montage.save(montage_file_name)
