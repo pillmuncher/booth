@@ -79,21 +79,21 @@ def _get_conf():
         c.montage.path,
         c.montage.glob_mask,
     )
-    c.collage.image = Image.open(c.collage.file)
-    c.collage.photo.size = c.collage.photo.width, c.collage.photo.height
-    c.collage.photo.positions = [
-        (c.collage.x1, c.collage.y1),
-        (c.collage.x2, c.collage.y1),
-        (c.collage.x1, c.collage.y2),
-        (c.collage.x2, c.collage.y2),
-    ]
-    c.collage.full_mask = os.path.join(
-        c.collage.path,
-        c.collage.mask,
-    )
-    c.collage.counter = itertools.count(
-        get_first_collage_number(
-            c.collage.full_mask.format('*', '*'), c.collage.pattern))
+    # c.collage.image = Image.open(c.collage.file)
+    # c.collage.photo.size = c.collage.photo.width, c.collage.photo.height
+    # c.collage.photo.positions = [
+        # (c.collage.x1, c.collage.y1),
+        # (c.collage.x2, c.collage.y1),
+        # (c.collage.x1, c.collage.y2),
+        # (c.collage.x2, c.collage.y2),
+    # ]
+    # c.collage.full_mask = os.path.join(
+        # c.collage.path,
+        # c.collage.mask,
+    # )
+    # c.collage.counter = itertools.count(
+        # get_first_collage_number(
+            # c.collage.full_mask.format('*', '*'), c.collage.pattern))
     c.montage1.photo.size = c.montage1.photo.width, c.montage1.photo.height
     c.montage1.photo.position = c.montage1.x, c.montage1.y
     c.montage1.image = Image.open(c.montage1.file)
@@ -105,16 +105,16 @@ def _get_conf():
         c.montage1.path,
         c.montage1.glob_mask,
     )
-    c.collage1.image = Image.open(c.collage1.file)
-    c.collage1.photo.size = c.collage1.photo.width, c.collage1.photo.height
-    c.collage1.photo.position = c.collage1.x, c.collage1.y
-    c.collage1.full_mask = os.path.join(
-        c.collage1.path,
-        c.collage1.mask,
-    )
-    c.collage1.counter = itertools.count(
-        get_first_collage_number(
-            c.collage1.full_mask.format('*', '*'), c.collage1.pattern))
+    # c.collage1.image = Image.open(c.collage1.file)
+    # c.collage1.photo.size = c.collage1.photo.width, c.collage1.photo.height
+    # c.collage1.photo.position = c.collage1.x, c.collage1.y
+    # c.collage1.full_mask = os.path.join(
+        # c.collage1.path,
+        # c.collage1.mask,
+    # )
+    # c.collage1.counter = itertools.count(
+        # get_first_collage_number(
+            # c.collage1.full_mask.format('*', '*'), c.collage1.pattern))
     c.etc.prepare.full_image_mask = os.path.join(
         c.etc.path,
         c.etc.prepare.image_mask,
@@ -401,35 +401,35 @@ class PhotoBooth(object):
 
     def click_event_old(self):
         timestamp = datetime.datetime.now()
-        montage_file_name = CONF.montage.full_mask.format(timestamp)
-        collage_file_name = CONF.collage.full_mask.format(
-            timestamp, next(CONF.collage.counter))
-        with paster(CONF.montage.image, CONF.montage.photo.size) as montp:
-            with paster(CONF.collage.image, CONF.collage.photo.size) as collp:
-                with self.click_mode():
-                    for i in xrange(4):
-                        self.count_down(i + 1)
-                        photo_file_name = CONF.photo.file_mask.format(
-                            timestamp, i + 1)
-                        if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
-                            raise RuntimeError(
-                                "gphoto2 couldn't capture image!")
-                        montp.paste(
-                            (CONF.montage.photo.positions[i], photo_file_name))
-                        collp.paste(
-                            (CONF.collage.photo.positions[i], photo_file_name))
-                    self.show_image(
-                        pygame.image.load(CONF.etc.black.full_image_file))
-                montp.result().save(montage_file_name)
-                self.show_image(pygame.image.load(montage_file_name))
-                collp.result().save(collage_file_name)
-        time.sleep(CONF.montage.interval)
+        # montage_file_name = CONF.montage.full_mask.format(timestamp)
+        # collage_file_name = CONF.collage.full_mask.format(
+            # timestamp, next(CONF.collage.counter))
+        # with paster(CONF.montage.image, CONF.montage.photo.size) as montp:
+            # with paster(CONF.collage.image, CONF.collage.photo.size) as collp:
+                # with self.click_mode():
+                    # for i in xrange(4):
+                        # self.count_down(i + 1)
+                        # photo_file_name = CONF.photo.file_mask.format(
+                            # timestamp, i + 1)
+                        # if subprocess.call(GPHOTO2_CMD + [photo_file_name]):
+                            # raise RuntimeError(
+                                # "gphoto2 couldn't capture image!")
+                        # montp.paste(
+                            # (CONF.montage.photo.positions[i], photo_file_name))
+                        # collp.paste(
+                            # (CONF.collage.photo.positions[i], photo_file_name))
+                    # self.show_image(
+                        # pygame.image.load(CONF.etc.black.full_image_file))
+                # montp.result().save(montage_file_name)
+                # self.show_image(pygame.image.load(montage_file_name))
+                # collp.result().save(collage_file_name)
+        # time.sleep(CONF.montage.interval)
 
     def click_event(self):
         timestamp = datetime.datetime.now()
         montage_file_name = CONF.montage1.full_mask.format(timestamp)
-        collage_file_name = CONF.collage1.full_mask.format(
-            timestamp, next(CONF.collage1.counter))
+        # collage_file_name = CONF.collage1.full_mask.format(
+            # timestamp, next(CONF.collage1.counter))
         with self.click_mode():
             self.count_down(1)
             photo_file_name = CONF.photo.file_mask.format(timestamp, 1)
@@ -445,17 +445,17 @@ class PhotoBooth(object):
                      .resize(CONF.montage1.photo.size, Image.ANTIALIAS),
                 CONF.montage1.photo.position)
             logging.debug('Montagebild erzeugt')
-            collage = CONF.collage1.image.copy()
-            collage.paste(
-                Image.open(photo_file_name)
-                     .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
-                CONF.collage1.photo.position)
+            # collage = CONF.collage1.image.copy()
+            # collage.paste(
+                # Image.open(photo_file_name)
+                     # .resize(CONF.collage1.photo.size, Image.ANTIALIAS),
+                # CONF.collage1.photo.position)
             logging.debug('Collagebild erzeugt')
             montage.save(montage_file_name)
             logging.debug('Montagebild gespeichert')
             self.show_image(pygame.image.load(montage_file_name))
-            collage.save(collage_file_name)
-            logging.debug('Collagebild gespeichert')
+            # collage.save(collage_file_name)
+            # logging.debug('Collagebild gespeichert')
             time.sleep(CONF.montage1.interval)
         except Exception, e:
             logging.debug(str(e))
