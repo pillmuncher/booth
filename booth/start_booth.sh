@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sleep 4
+sleep 8
 
 python /home/pi/booth/booth/booth.py
 
