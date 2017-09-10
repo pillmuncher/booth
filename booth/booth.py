@@ -105,16 +105,16 @@ def _get_conf():
         c.montage1.path,
         c.montage1.glob_mask,
     )
-    # c.collage1.image = Image.open(c.collage1.file)
-    # c.collage1.photo.size = c.collage1.photo.width, c.collage1.photo.height
-    # c.collage1.photo.position = c.collage1.x, c.collage1.y
-    # c.collage1.full_mask = os.path.join(
-        # c.collage1.path,
-        # c.collage1.mask,
-    # )
-    # c.collage1.counter = itertools.count(
-        # get_first_collage_number(
-            # c.collage1.full_mask.format('*', '*'), c.collage1.pattern))
+    c.collage1.image = Image.open(c.collage1.file)
+    c.collage1.photo.size = c.collage1.photo.width, c.collage1.photo.height
+    c.collage1.photo.position = c.collage1.x, c.collage1.y
+    c.collage1.full_mask = os.path.join(
+        c.collage1.path,
+        c.collage1.mask,
+    )
+    c.collage1.counter = itertools.count(
+        get_first_collage_number(
+            c.collage1.full_mask.format('*', '*'), c.collage1.pattern))
     c.etc.prepare.full_image_mask = os.path.join(
         c.etc.path,
         c.etc.prepare.image_mask,
