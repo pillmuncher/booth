@@ -439,8 +439,8 @@ class PhotoBooth(object):
                 raise RuntimeError("gphoto2 couldn't capture image!")
             self.show_image(pygame.image.load(CONF.etc.black.full_image_file))
         try:
-            with paster(CONF.collage.image, CONF.collage.photo.size) as collp:
-                collp.paste((CONF.collage.photo.position, photo_file_name))
+            with paster(CONF.collage1.image, CONF.collage1.photo.size) as collp:
+                collp.paste((CONF.collage1.photo.position, photo_file_name))
                 montage = CONF.montage1.image.copy()
                 montage.paste(
                     Image.open(photo_file_name)
