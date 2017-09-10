@@ -81,7 +81,7 @@
   "collage1": {
     "file": "/home/pi/Desktop/countdown/collage.jpg",
     "path": "/home/pi/Desktop/Collage",
-    "mask": "{:%Y-%m-%d-%H-%M-%S}.jpg",
+    "mask": "{}.jpg",
     "pattern": "^.*-(\\d+)\\.jpg$",
     "x": 50,
     "y": 150,
