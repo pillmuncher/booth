@@ -112,9 +112,9 @@ def _get_conf():
         c.collage1.path,
         c.collage1.mask,
     )
-    c.collage1.counter = itertools.count(
-        get_first_collage_number(
-            c.collage1.full_mask.format('*', '*'), c.collage1.pattern))
+    # c.collage1.counter = itertools.count(
+        # get_first_collage_number(
+            # c.collage1.full_mask.format('*', '*'), c.collage1.pattern))
     c.etc.prepare.full_image_mask = os.path.join(
         c.etc.path,
         c.etc.prepare.image_mask,
@@ -428,8 +428,7 @@ class PhotoBooth(object):
     def click_event(self):
         timestamp = datetime.datetime.now()
         montage_file_name = CONF.montage1.full_mask.format(timestamp)
-        collage_file_name = CONF.collage1.full_mask.format(
-            timestamp, next(CONF.collage1.counter))
+        collage_file_name = CONF.collage1.full_mask.format(timestamp)
         with self.click_mode():
             self.count_down(1)
             photo_file_name = CONF.photo.file_mask.format(timestamp, 1)
