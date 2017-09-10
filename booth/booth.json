@@ -82,7 +82,7 @@
     "file": "/home/pi/Desktop/countdown/collage.jpg",
     "path": "/home/pi/Desktop/Collage",
     "mask": "{}.jpg",
-    "pattern": "^.*-(\\d+)\\.jpg$",
+    "pattern": "^(\\d+)\\.jpg$",
     "x": 50,
     "y": 150,
     "photo": {
