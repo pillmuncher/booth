@@ -46,13 +46,13 @@ class Config(object):
 
 def get_first_collage_number(glob_mask, pattern):
     file_names = glob.glob(glob_mask)
-    if not file_names:
-        return 0
     matcher = re.compile(pattern=pattern)
     matches = (matcher.match(each) for each in file_names)
-    return 1 + max(int(match.group(1))
-                   for match in matches
-                   if match is not None)
+    matches = [match for match in matches if match is not None]
+    if matches:
+        return 1 + max(int(match.group(1)) for match in matches)
+    else:
+        return 0
 
 
 def _get_conf():
