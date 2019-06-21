@@ -81,13 +81,13 @@
   "collage1": {
     "file": "/home/pi/Desktop/countdown/collage.jpg",
     "path": "/home/pi/Desktop/Collage",
-    "mask": "{}.jpg",
+    "mask": "{:%Y-%m-%d-%H-%M-%S}.jpg",
     "pattern": "^(\\d+)\\.jpg$",
     "x": 50,
-    "y": 150,
+    "y": 75,
     "photo": {
       "width": 3546,
-      "height": 2630
+      "height": 2400
     }
   },
   "etc": {
